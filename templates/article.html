@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+<script>
+    const archive = () => {
+        // TODO
+    }
+
+    const tag = () => {
+        // TODO
+    }
+
+    const start = () => {
+        fetch("/articles/{{article.id}}/delete", {
+            method: "POST"
+        }).then(() => {
+            document.getElementById("star-button").classList.add("text-yellow-300")
+        })
+    }
+
+    const share = () => {
+        // TODO
+    }
+</script>
+<nav class="flex flex-row gap-4 justify-center border-b border-gray-400">
+    <a href="/"><i class="text-xl ti ti-home"></i></a>
+    <a href="/articles/{{article.id}}/delete"><i class="text-xl ti ti-trash"></i></a>
+    <button onclick=tag()><i class="text-xl ti ti-tag"></i></button>
+    <button onclick=share()><i class="text-xl ti ti-share"></i></button>
+    <button onclick=archive()><i class="text-xl ti ti-archive"></i></button>
+    <button id=star-button" onclick=star()><i class="text-xl ti ti-star"></i></button>
+</nav>
+<section class="flex justify-center">
+    <article class="prose lg-prose-xl">
+        {{article.content|safe}}
+    </article>
+</section>
+</body>
+{% endblock %}

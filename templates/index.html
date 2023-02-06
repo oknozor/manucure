@@ -1,20 +1,22 @@
- <!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
 
-<h1>This is a Heading</h1>
+{% extends "base.html" %}
+{% block content %}
+<h1>Manucure</h1>
 
-<form action="/article/save">
-  <input type="text", name="url"></input>
-  <input type="submit"></input>
+<main class="flex flex-col gap-4 p-16">
+<form action="/articles/save">
+  <label></label>
+  <input class="rounded-lg" type="text", name="url"></input>
+  <input class="rounded-lg bg-slate-400 px-4 py-2" type="submit" value="Save"></input>
 </form>
 
-{% for article in articles %}
-<h3>{{article.title}}</h3>
-{% endfor %}
-
-</body>
-</html> 
+<h3 class="text-2xl font-bold">Saves</h3>
+<div class="grid grid-cols-4 gap-4 justify-center content-center">
+  {% for article in articles %}
+  <div class="rounded-lg border border-slate-500 shadow-xl space-y-4 px-4 py-2">
+    <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
+  </div>
+  {% endfor %}
+</div>
+</main>
+{% endblock %}

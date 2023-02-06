@@ -7,15 +7,22 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1.9.0", features = ["full"] }
-axum = "0.6.4"
+axum = { version = "0.6.4", features = ["headers", "json"] } 
 axum-macros = "0.3.2"
 askama = "0.11.1"
 sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "any", "postgres", "offline", "chrono", "uuid"] }
 tracing = "0.1.9"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tower = { version = "0.4", features = ["util"] }
+tower-http = { version = "0.3.0", features = ["fs", "trace"] }
 anyhow = "1.0.9"
 http = "0.2.8"
-readability = { version = "0.2.0", default-features = false }
-reqwest = "0.11.14"
+readability = { path = "../readability" }
+reqwest = { version = "0.11.14", features = ["json"] }
 url = "2.3.1"
 serde = { version = "1", features = [ "derive" ] }
+oauth2 = "4.1"
+async-session = "3.0.0"
+once_cell = "1.17.0"
+config = "0.13.3"
+headers = "0.3.8"

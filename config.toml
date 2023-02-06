@@ -1,0 +1,18 @@
+port = 3000
+debug = true
+domain = "localhost:3000"
+
+[database]
+host = "localhost"
+port = 5432
+database = "manucure"
+user = "postgres"
+password = "postgres"
+
+[oauth_provider]
+client_id = "manucure"
+client_secret = "xZjWvaWPcHlglqcp5b19iLdke5sf9JG7"
+provider = "https://keycloak.cloud.hoohoot.org"
+user_info_url = "/auth/realms/hoohoot/protocol/openid-connect/userinfo"
+auth_url = "/auth/realms/hoohoot/protocol/openid-connect/auth"
+token_url = "/auth/realms/hoohoot/protocol/openid-connect/token"

@@ -1,4 +1,4 @@
-use axum::response::{IntoResponse, Response};
+use axum::response::{IntoResponse, Redirect, Response};
 use http::StatusCode;
 use tracing::error;
 
@@ -28,7 +28,7 @@ impl IntoResponse for AppError {
             AppError::Internal(error) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, format!("{error}")).into_response()
             }
-            AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "UNAUTHORIZED").into_response(),
+            AppError::Unauthorized => Redirect::to("/auth/manucure").into_response(),
             AppError::NotFound => (StatusCode::NOT_FOUND, "NOT_FOUND").into_response(),
         }
     }

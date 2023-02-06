@@ -1,0 +1,4 @@
+ALTER TABLE article
+    ADD COLUMN starred BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE article
+    ADD COLUMN archived BOOLEAN NOT NULL DEFAULT false;
