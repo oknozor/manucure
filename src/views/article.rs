@@ -54,3 +54,36 @@ pub async fn delete_article(
 
     Ok(Redirect::to("/"))
 }
+
+pub async fn star_article(
+    user: Option<Oauth2User>,
+    Extension(db): Extension<PgPool>,
+    Path(id): Path<i64>,
+) -> AppResult<()> {
+    let user = get_connected_user(user, &db).await?;
+    db::article::star(user.id, id, &db).await?;
+
+    Ok(())
+}
+
+pub async fn unstar_article(
+    user: Option<Oauth2User>,
+    Extension(db): Extension<PgPool>,
+    Path(id): Path<i64>,
+) -> AppResult<()> {
+    let user = get_connected_user(user, &db).await?;
+    db::article::unstar(user.id, id, &db).await?;
+
+    Ok(())
+}
+
+pub async fn archive_article(
+    user: Option<Oauth2User>,
+    Extension(db): Extension<PgPool>,
+    Path(id): Path<i64>,
+) -> AppResult<()> {
+    let user = get_connected_user(user, &db).await?;
+    db::article::archive(user.id, id, &db).await?;
+
+    Ok(())
+}

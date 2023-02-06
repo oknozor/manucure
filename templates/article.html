@@ -3,32 +3,92 @@
 <body>
 <script>
     const archive = () => {
-        // TODO
+        fetch("/articles/{{article.id}}/archive", {
+            method: "POST"
+        }).then(() => {
+            let button = document.getElementById("archive-button");
+            button.onclick = unarchive
+
+            let icon = document.getElementById("star-button");
+            icon.classList.replace("ti-archive", "ti-circle-plus")
+        })
+    }
+
+    const unarchive = () => {
+        fetch("/articles/{{article.id}}/unarchive", {
+            method: "POST"
+        }).then(() => {
+            let button = document.getElementById("archive-button");
+            button.onclick = archive
+
+            let icon = document.getElementById("star-button");
+            icon.classList.replace("ti-circle-plus", "ti-archive")
+        })
     }
 
     const tag = () => {
         // TODO
     }
 
-    const start = () => {
-        fetch("/articles/{{article.id}}/delete", {
+    const star = () => {
+        fetch("/articles/{{article.id}}/star", {
             method: "POST"
         }).then(() => {
-            document.getElementById("star-button").classList.add("text-yellow-300")
+            let button = document.getElementById("star-button");
+            button.onclick = unstar
+
+            let icon = document.getElementById("star-icon");
+            icon.classList.add("text-yellow-300");
+            icon.classList.replace("ti-star", "ti-star-filled");
+        })
+    }
+
+    const unstar = () => {
+        fetch("/articles/{{article.id}}/unstar", {
+            method: "POST"
+        }).then(() => {
+            let button = document.getElementById("star-button");
+            button.onclick = star
+
+            let icon = document.getElementById("star-icon");
+            icon.classList.remove("text-yellow-300");
+            icon.classList.replace("ti-star-filled", "ti-star");
         })
     }
 
     const share = () => {
-        // TODO
+        fetch("/articles/{{article.id}}/delete", {
+            method: "POST"
+        }).then(() => {
+
+        })
     }
 </script>
-<nav class="flex flex-row gap-4 justify-center border-b border-gray-400">
-    <a href="/"><i class="text-xl ti ti-home"></i></a>
-    <a href="/articles/{{article.id}}/delete"><i class="text-xl ti ti-trash"></i></a>
-    <button onclick=tag()><i class="text-xl ti ti-tag"></i></button>
-    <button onclick=share()><i class="text-xl ti ti-share"></i></button>
-    <button onclick=archive()><i class="text-xl ti ti-archive"></i></button>
-    <button id=star-button" onclick=star()><i class="text-xl ti ti-star"></i></button>
+<nav class="flex flex-row gap-4 justify-center border-b border-gray-400 mb-10">
+    <a href="/"><i class="text-3xl ti ti-home"></i></a>
+    <a href="/articles/{{article.id}}/delete"><i class="text-3xl ti ti-trash"></i></a>
+    <button onclick=tag()><i class="text-3xl ti ti-tag"></i></button>
+    <button onclick=share()><i class="text-3xl ti ti-share"></i></button>
+
+    {% if article.archived %}
+    <button id="archive-button" onclick=unarchive()>
+        <i id="archive-icon" class="text-3xl ti ti-circle-plus"></i>
+    </button>
+    {% else %}
+    <button id="archive-button" onclick=archive()>
+        <i id=archive-icon" class="text-3xl ti ti-archive"></i>
+    </button>
+    {% endif %}
+
+    {% if article.starred %}
+    <button id="star-button" onclick=unstar()>
+        <i id="star-icon" class="text-yellow-300 text-3xl ti ti-star-filled"></i>
+    </button>
+    {% else %}
+    <button id="star-button" onclick=star()>
+        <i id=star-icon" class="text-3xl ti ti-star"></i>
+    </button>
+    {% endif %}
 </nav>
 <section class="flex justify-center">
     <article class="prose lg-prose-xl">

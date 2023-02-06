@@ -1,22 +1,25 @@
-
 {% extends "base.html" %}
 {% block content %}
-<h1>Manucure</h1>
-
 <main class="flex flex-col gap-4 p-16">
-<form action="/articles/save">
-  <label></label>
-  <input class="rounded-lg" type="text", name="url"></input>
-  <input class="rounded-lg bg-slate-400 px-4 py-2" type="submit" value="Save"></input>
-</form>
+    <h1 class="text-3xl font-bold underline">Manucure</h1>
+    <form action="/articles/save">
+        <label></label>
+        <label>
+            <input class="rounded-lg" type="text" name="url">
+        </label>
+        <input class="rounded-lg bg-slate-400 px-4 py-2" type="submit" value="Save">
+    </form>
 
-<h3 class="text-2xl font-bold">Saves</h3>
-<div class="grid grid-cols-4 gap-4 justify-center content-center">
-  {% for article in articles %}
-  <div class="rounded-lg border border-slate-500 shadow-xl space-y-4 px-4 py-2">
-    <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
-  </div>
-  {% endfor %}
-</div>
+    <h2 class="text-2xl font-bold">Saves</h2>
+    <div class="flex flex-row">
+        {% include "nav.html" %}
+        <div class="grid grid-cols-4 gap-4 justify-center content-center">
+            {% for article in articles %}
+            <div class="rounded-lg border border-slate-500 shadow-xl space-y-4 px-4 py-2">
+                <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </main>
 {% endblock %}

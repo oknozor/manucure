@@ -87,6 +87,20 @@ pub(crate) async fn star(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<(
     Ok(())
 }
 
+pub(crate) async fn unstar(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+    sqlx::query_as!(
+        Article,
+        // language=PostgreSQL
+        "UPDATE article SET starred = false WHERE id = $1 AND user_id = $2",
+        id,
+        user_id
+    )
+        .execute(db)
+        .await?;
+
+    Ok(())
+}
+
 pub async fn fetch_and_store(user_id: i64, url: &str, db: &PgPool) -> anyhow::Result<()> {
     let url = url.to_owned();
     let article = scrape(&url).await?;

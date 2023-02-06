@@ -6,7 +6,7 @@ use async_session::MemoryStore;
 use axum::response::IntoResponse;
 use axum::routing::get_service;
 use axum::Extension;
-use axum::{routing::get, Router};
+use axum::{routing::{get, post}, Router};
 use http::StatusCode;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::services::ServeDir;
@@ -59,6 +59,9 @@ async fn main() -> anyhow::Result<()> {
         .route("/articles/save", get(article::save))
         .route("/articles/:id", get(article::get_article))
         .route("/articles/:id/delete", get(article::delete_article))
+        .route("/articles/:id/star", post(article::star_article))
+        .route("/articles/:id/unstar", post(article::unstar_article))
+        .route("/articles/:id/archive", post(article::archive_article))
         .route("/auth/manucure/", get(auth::openid_auth))
         .route("/auth/manucure", get(auth::openid_auth))
         .route("/auth/authorized/", get(auth::login_authorized))
