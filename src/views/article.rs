@@ -1,9 +1,9 @@
 use crate::auth::Oauth2User;
+use crate::db;
 use crate::db::article::{fetch_and_store, Article};
 use crate::db::user::get_connected_user;
 use crate::errors::AppResult;
 use crate::views::HtmlTemplate;
-use crate::{db};
 use askama::Template;
 use axum::extract::Path;
 use axum::response::Redirect;

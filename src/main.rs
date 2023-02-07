@@ -6,7 +6,10 @@ use async_session::MemoryStore;
 use axum::response::IntoResponse;
 use axum::routing::get_service;
 use axum::Extension;
-use axum::{routing::{get, post}, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use http::StatusCode;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::services::ServeDir;
@@ -56,8 +59,11 @@ async fn main() -> anyhow::Result<()> {
     };
 
     let router = Router::new()
-        .route("/articles/save", get(article::save))
+        .route("/tags", get(home::tags))
+        .route("/archive", get(home::archived))
+        .route("/favorites", get(home::starred))
         .route("/articles/:id", get(article::get_article))
+        .route("/articles/save", get(article::save))
         .route("/articles/:id/delete", get(article::delete_article))
         .route("/articles/:id/star", post(article::star_article))
         .route("/articles/:id/unstar", post(article::unstar_article))
@@ -67,7 +73,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/auth/authorized/", get(auth::login_authorized))
         .route("/auth/authorized", get(auth::login_authorized))
         .route("/logout/", get(auth::logout))
-        .route("/", get(home::index))
+        .route("/", get(home::articles))
         .nest_service(
             "/assets",
             get_service(ServeDir::new("assets")).handle_error(handle_error),

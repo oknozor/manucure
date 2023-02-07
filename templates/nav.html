@@ -1,9 +1,15 @@
-<nav class="pr-10">
+<nav class="pr-5 mr-5 border-r border-slate-300">
   <h4 class="text-xl">Filters</h4>
+  <script>
+    const goToArchive = () => window.location.href = "/archive"
+    const goToFavorites = () => window.location.href = "/favorites";
+    const goToArticles = () => window.location.href = "/";
+    const goToTags = () => window.location.href = "/tags";
+</script>
   <ul class="flex flex-col divide-y divide-slate-200 content-center gap-2">
-    <li class="hover:underline">Articles</li>
-    <li class="hover:underline">Starred</li>
-    <li class="hover:underline">Archived</li>
-    <li class="hover:underline">Tags</li>
+    <li class="hover:underline" onclick="goToArticles()">Articles</li>
+    <li class="hover:underline" onclick="goToFavorites()">Starred</li>
+    <li class="hover:underline" onclick="goToArchive()">Archived</li>
+    <li class="hover:underline" onclick="goToTags()">Tags</li>
   </ul>
 </nav>

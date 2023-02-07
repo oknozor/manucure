@@ -1,25 +1,31 @@
 {% extends "base.html" %}
+{% include "bar.html" %}
 {% block content %}
-<main class="flex flex-col gap-4 p-16">
-    <h1 class="text-3xl font-bold underline">Manucure</h1>
-    <form action="/articles/save">
-        <label></label>
-        <label>
-            <input class="rounded-lg" type="text" name="url">
-        </label>
-        <input class="rounded-lg bg-slate-400 px-4 py-2" type="submit" value="Save">
-    </form>
-
-    <h2 class="text-2xl font-bold">Saves</h2>
+<main class="flex flex-col p-16 gap-3">
     <div class="flex flex-row">
         {% include "nav.html" %}
-        <div class="grid grid-cols-4 gap-4 justify-center content-center">
-            {% for article in articles %}
-            <div class="rounded-lg border border-slate-500 shadow-xl space-y-4 px-4 py-2">
-                <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
+        <div class="flex flex-col gap-4">
+            <form action="/articles/save">
+                <label></label>
+                <label>
+                    <input class="rounded-lg" type="text" name="url">
+                </label>
+                <input class="rounded-lg bg-slate-400 px-4 py-2" type="submit" value="Save">
+            </form>
+
+            <h2 class="text-2xl font-bold">{{title}}</h2>
+            <div class="flex flex-row">
+                <div class="grid grid-cols-4 gap-4 justify-center content-center">
+                    {% for article in articles %}
+                    <div class="flex flex-col justify-between gap rounded-lg border border-slate-500 shadow-xl space-y-4 px-4 py-2">
+                        <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
+                        <span class="text-sm text-slate-700">Added on {{article.created|date_format}}</span>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            {% endfor %}
         </div>
     </div>
 </main>
+
 {% endblock %}

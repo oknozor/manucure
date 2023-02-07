@@ -10,6 +10,7 @@ pub struct Article {
     pub text: String,
     pub starred: bool,
     pub archived: bool,
+    pub created: chrono::NaiveDateTime,
     pub content: String,
 }
 
@@ -34,8 +35,8 @@ pub(crate) async fn get(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<Ar
     let article = sqlx::query_as!(
         Article,
         // language=PostgreSQL
-        r#"SELECT id, user_id, url, title, text, starred, archived, content
-        FROM article WHERE id = $1 AND user_id = $2 AND NOT article.archived"#,
+        r#"SELECT id, user_id, url, title, text, starred, archived, created, content
+        FROM article WHERE id = $1 AND user_id = $2"#,
         id,
         user_id
     )
@@ -95,8 +96,8 @@ pub(crate) async fn unstar(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result
         id,
         user_id
     )
-        .execute(db)
-        .await?;
+    .execute(db)
+    .await?;
 
     Ok(())
 }
@@ -137,6 +138,19 @@ pub async fn get_all_archived(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<A
         Article,
         // language=PostgreSQL
         "SELECT * FROM article WHERE user_id = $1 AND archived",
+        user_id
+    )
+    .fetch_all(db)
+    .await?;
+
+    Ok(articles)
+}
+
+pub async fn get_all_starred(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Article>> {
+    let articles = sqlx::query_as!(
+        Article,
+        // language=PostgreSQL
+        "SELECT * FROM article WHERE user_id = $1 AND starred",
         user_id
     )
     .fetch_all(db)

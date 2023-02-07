@@ -15,4 +15,16 @@
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+.has-tooltip {
+    @apply relative
+}
+
+.tooltip {
+    @apply invisible absolute mt-10 -right-1/2 w-max;
+}
+
+.has-tooltip:hover .tooltip {
+    @apply visible z-50
+}
+
 
