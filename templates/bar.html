@@ -1,9 +1,15 @@
 <header id="nav-header" class="border-b border-slate-500">
     <nav class="flex flex-row flex-wrap w-full items-center justify-between px-4 py-2">
         <h1 class="text-3xl font-bold">Manucure</h1>
+        <div class="wrapper">
+            <div id="searchbox"></div>
+            <div id="hits"></div>
+        </div>
         <div>
             <i class="text-3xl ti ti-sun-low"></i>
             <i class="text-3xl ti ti-moon-stars"></i>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch/dist/instant-meilisearch.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
     </nav>
 </header>

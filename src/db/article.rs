@@ -1,7 +1,10 @@
+use meilisearch_sdk::client::Client as MeiliClient;
 use readability::extractor::scrape;
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+use tracing::{debug, error};
 
-#[derive(sqlx::FromRow, sqlx::Type, Debug)]
+#[derive(sqlx::FromRow, sqlx::Type, Serialize, Deserialize, Debug)]
 pub struct Article {
     pub id: i64,
     pub user_id: i64,
@@ -102,20 +105,42 @@ pub(crate) async fn unstar(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result
     Ok(())
 }
 
-pub async fn fetch_and_store(user_id: i64, url: &str, db: &PgPool) -> anyhow::Result<()> {
+pub async fn fetch_and_store(
+    user_id: i64,
+    url: &str,
+    meili_client: MeiliClient,
+    db: &PgPool,
+) -> anyhow::Result<()> {
     let url = url.to_owned();
     let article = scrape(&url).await?;
-    sqlx::query!(
+    let mut transaction = db.begin().await?;
+
+    let article = sqlx::query_as!(
+        Article,
         // language=PostgreSQL
-        "INSERT INTO article (url, user_id, text, content, title) VALUES ($1, $2, $3, $4, $5)",
+        "INSERT INTO article (url, user_id, text, content, title) VALUES ($1, $2, $3, $4, $5) RETURNING *",
         url,
         user_id,
         article.text,
         article.content,
         article.title
     )
-    .execute(db)
+    .fetch_one(&mut transaction)
     .await?;
+
+    tokio::spawn(async move {
+        let id = article.id;
+        match meili_client
+            .index("articles")
+            .add_documents(&[article], Some("id"))
+            .await
+        {
+            Ok(task) => debug!("Article indexed: {task:?}"),
+            Err(err) => error!("Indexation failed for article {id}: {err}"),
+        };
+    });
+
+    transaction.commit().await?;
 
     Ok(())
 }

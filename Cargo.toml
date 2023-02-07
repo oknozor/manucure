@@ -28,3 +28,4 @@ config = "0.13.3"
 headers = "0.3.8"
 chrono = { version = "0.4.23", features = ["serde"] }
 estimated_read_time = "1.0.0"
+meilisearch-sdk = "0.22.0"

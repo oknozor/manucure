@@ -11,6 +11,7 @@ use axum::{
     Router,
 };
 use http::StatusCode;
+use meilisearch_sdk::client::Client as MeiliClient;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
@@ -52,10 +53,12 @@ async fn main() -> anyhow::Result<()> {
 
     let store = MemoryStore::new();
     let oauth_client = oauth_client();
-
+    let meili_client =
+        MeiliClient::new(&SETTINGS.search_engine.url, &SETTINGS.search_engine.api_key);
     let state = AppState {
         store,
         oauth_client,
+        meili_client,
     };
 
     let router = Router::new()
@@ -93,4 +96,31 @@ async fn main() -> anyhow::Result<()> {
 
 async fn handle_error(_err: io::Error) -> impl IntoResponse {
     (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
+}
+
+#[cfg(test)]
+mod test {
+    use crate::db::article::Article;
+    use crate::settings::SETTINGS;
+
+    #[tokio::test]
+    async fn test() {
+        let client = meilisearch_sdk::client::Client::new(
+            &SETTINGS.search_engine.url,
+            &SETTINGS.search_engine.api_key,
+        );
+        let x = client.list_all_indexes().await;
+        println!("{:?}", x.unwrap());
+        println!(
+            "{:?}",
+            client
+                .index("articles")
+                .search()
+                .with_query("ko")
+                .execute::<Article>()
+                .await
+                .unwrap()
+                .hits
+        );
+    }
 }

@@ -13,6 +13,13 @@ pub struct Settings {
     pub port: u16,
     pub oauth_provider: AuthSettings,
     pub database: DbSettings,
+    pub search_engine: SearchSettings,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SearchSettings {
+    pub url: String,
+    pub api_key: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

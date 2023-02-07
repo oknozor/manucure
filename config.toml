@@ -9,6 +9,10 @@ database = "manucure"
 user = "postgres"
 password = "postgres"
 
+[search_engine]
+url = "http://localhost:7700"
+api_key = "fMuxK9AIppcbb6H08T]gm>YAz"
+
 [oauth_provider]
 client_id = "manucure"
 client_secret = "xZjWvaWPcHlglqcp5b19iLdke5sf9JG7"

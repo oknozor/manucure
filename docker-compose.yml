@@ -11,3 +11,13 @@ services:
       - "5432:5432"
     volumes:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.0
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: fMuxK9AIppcbb6H08T]gm>YAz
+    ports:
+      - "7700:7700"
+    volumes:
+      - ./docker/meili_data:/meili_data

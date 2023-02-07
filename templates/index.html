@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 {% include "bar.html" %}
-<button onclick="createBookmark()"></button>
 <main class="flex flex-col p-16 gap-3">
     <div class="flex flex-row">
         {% include "nav.html" %}
@@ -16,7 +15,7 @@
 
             <h2 class="text-2xl font-bold">{{title}}</h2>
             <div class="flex flex-row">
-                <div class="grid grid-cols-4 gap-5 justify-center content-center">
+                <div class="grid md:grid-cols-4 sm:grid-cols-1 gap-5 justify-center content-center">
                     {% for article in articles %}
                     <div class="flex flex-col justify-around gap rounded-lg border border-slate-300 shadow-lg
                     space-y-4 px-4 py-2 divide-slate-200 divide-y">
@@ -27,7 +26,7 @@
                                 <span class="text-sm text-slate-700">|</span>
                                 <span class="text-sm text-slate-700">{{article.text|read_time}}</span>
                             </div>
-                            <span class="text-sm text-slate-700">Added on {{article.created|date_format}}</span>
+                            <span class="text-sm text-slate-700">Added {{article.created|date_format}}</span>
                         </div>
                     </div>
                     {% endfor %}
@@ -36,5 +35,4 @@
         </div>
     </div>
 </main>
-
 {% endblock %}

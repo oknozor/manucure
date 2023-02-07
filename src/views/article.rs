@@ -3,9 +3,10 @@ use crate::db;
 use crate::db::article::{fetch_and_store, Article};
 use crate::db::user::get_connected_user;
 use crate::errors::AppResult;
+use crate::state::AppState;
 use crate::views::HtmlTemplate;
 use askama::Template;
-use axum::extract::Path;
+use axum::extract::{Path, State};
 use axum::response::Redirect;
 use axum::{Extension, Form};
 use serde::Deserialize;
@@ -17,12 +18,13 @@ pub struct ArticleSaveForm {
 }
 
 pub async fn save(
+    State(state): State<AppState>,
     user: Option<Oauth2User>,
     Extension(db): Extension<PgPool>,
     Form(input): Form<ArticleSaveForm>,
 ) -> AppResult<Redirect> {
     let user = get_connected_user(user, &db).await?;
-    fetch_and_store(user.id, &input.url, &db).await?;
+    fetch_and_store(user.id, &input.url, state.meili_client, &db).await?;
     Ok(Redirect::to("/"))
 }
 

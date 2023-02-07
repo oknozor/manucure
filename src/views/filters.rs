@@ -1,4 +1,3 @@
-use anyhow::anyhow;
 use chrono::NaiveDateTime;
 use estimated_read_time::Options;
 use url::Url;
@@ -22,7 +21,7 @@ pub fn read_time<T: std::fmt::Display>(s: T) -> ::askama::Result<String> {
 pub fn domain<T: std::fmt::Display>(s: T) -> ::askama::Result<String> {
     let url = Url::parse(&s.to_string()).map_err(|err| askama::Error::Custom(Box::new(err)))?;
 
-    let domain = url.domain().expect(("Article url should be valid"));
+    let domain = url.domain().expect("Article url should be valid");
 
     Ok(domain.to_string())
 }
