@@ -3,8 +3,8 @@ use axum::response::{Html, IntoResponse, Response};
 use http::StatusCode;
 
 pub mod article;
-pub mod home;
 pub mod filters;
+pub mod home;
 
 pub struct HtmlTemplate<T>(T);
 

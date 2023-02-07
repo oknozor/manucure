@@ -39,6 +39,15 @@ If you prefer to use a Docker image, you can use the following steps:
 3. Start a Docker container using the image and specify the necessary environment variables, including the OpenID Connect provider information, and ports.
 4. Access the Manucure application in your web browser using the IP address and port of the Docker container, and log in using your OpenID Connect provider.
 
+
+## Usage
+
+### Bookmark save
+
+Create a bookmark in your browser and fill the URL field with the following: 
+```shell
+javascript:(function(){var url=location.href||url;var wllbg=window.open('http://localhost:3000/articles/save?url=' + encodeURIComponent(url),'_blank');})();
+```
 ## Screenshots
 
 ![Article Page](docs/article.png)

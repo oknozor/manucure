@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-{% include "bar.html" %}
 {% block content %}
+{% include "bar.html" %}
+<button onclick="createBookmark()"></button>
 <main class="flex flex-col p-16 gap-3">
     <div class="flex flex-row">
         {% include "nav.html" %}
@@ -15,11 +16,19 @@
 
             <h2 class="text-2xl font-bold">{{title}}</h2>
             <div class="flex flex-row">
-                <div class="grid grid-cols-4 gap-4 justify-center content-center">
+                <div class="grid grid-cols-4 gap-5 justify-center content-center">
                     {% for article in articles %}
-                    <div class="flex flex-col justify-between gap rounded-lg border border-slate-500 shadow-xl space-y-4 px-4 py-2">
+                    <div class="flex flex-col justify-around gap rounded-lg border border-slate-300 shadow-lg
+                    space-y-4 px-4 py-2 divide-slate-200 divide-y">
                         <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
-                        <span class="text-sm text-slate-700">Added on {{article.created|date_format}}</span>
+                        <div class="flex flex-col gap pt-3">
+                            <div class="flex flex-row flex-wrap gap-x-2">
+                                <a href="{{article.url}}" class="text-sm text-sky-600 hover:underline">{{article.url|domain}}</a>
+                                <span class="text-sm text-slate-700">|</span>
+                                <span class="text-sm text-slate-700">{{article.text|read_time}}</span>
+                            </div>
+                            <span class="text-sm text-slate-700">Added on {{article.created|date_format}}</span>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
