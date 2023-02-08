@@ -1,5 +1,6 @@
 use std::io;
 use std::net::SocketAddr;
+use std::path::PathBuf;
 use std::time::Duration;
 
 use async_session::MemoryStore;
@@ -61,6 +62,12 @@ async fn main() -> anyhow::Result<()> {
         meili_client,
     };
 
+    let opt_assets = "/opt/manucure/assets";
+    let asset_path = if PathBuf::from(opt_assets).exists() {
+        opt_assets
+    } else {
+        "assets"
+    };
     let router = Router::new()
         .route("/tags", get(home::tags))
         .route("/archive", get(home::archived))
@@ -79,7 +86,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/", get(home::articles))
         .nest_service(
             "/assets",
-            get_service(ServeDir::new("assets")).handle_error(handle_error),
+            get_service(ServeDir::new(asset_path)).handle_error(handle_error),
         )
         .layer(Extension(db))
         .layer(TraceLayer::new_for_http())

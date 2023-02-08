@@ -43,13 +43,15 @@ pub(crate) async fn get(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<Ar
         id,
         user_id
     )
-    .fetch_one(db)
-    .await?;
+        .fetch_one(db)
+        .await?;
 
     Ok(article)
 }
 
-pub(crate) async fn delete(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+pub(crate) async fn delete(user_id: i64, id: i64, meili_client: MeiliClient, db: &PgPool) -> anyhow::Result<()> {
+    let mut transaction = db.begin().await?;
+
     sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -57,8 +59,21 @@ pub(crate) async fn delete(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result
         id,
         user_id
     )
-    .execute(db)
-    .await?;
+        .execute(&mut transaction)
+        .await?;
+
+    tokio::spawn(async move {
+        match meili_client
+            .index("articles")
+            .delete_document(id)
+            .await
+        {
+            Ok(task) => debug!("Article indexed: {task:?}"),
+            Err(err) => error!("Indexation failed for article {id}: {err}"),
+        };
+    });
+
+    transaction.commit().await?;
 
     Ok(())
 }
@@ -71,8 +86,8 @@ pub(crate) async fn archive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Resul
         id,
         user_id
     )
-    .execute(db)
-    .await?;
+        .execute(db)
+        .await?;
 
     Ok(())
 }
@@ -85,8 +100,8 @@ pub(crate) async fn star(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<(
         id,
         user_id
     )
-    .execute(db)
-    .await?;
+        .execute(db)
+        .await?;
 
     Ok(())
 }
@@ -99,8 +114,8 @@ pub(crate) async fn unstar(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result
         id,
         user_id
     )
-    .execute(db)
-    .await?;
+        .execute(db)
+        .await?;
 
     Ok(())
 }
@@ -125,8 +140,8 @@ pub async fn fetch_and_store(
         article.content,
         article.title
     )
-    .fetch_one(&mut transaction)
-    .await?;
+        .fetch_one(&mut transaction)
+        .await?;
 
     tokio::spawn(async move {
         let id = article.id;
@@ -152,8 +167,8 @@ pub async fn get_all_active(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Art
         "SELECT * FROM article WHERE user_id = $1 AND NOT archived",
         user_id
     )
-    .fetch_all(db)
-    .await?;
+        .fetch_all(db)
+        .await?;
 
     Ok(articles)
 }
@@ -165,8 +180,8 @@ pub async fn get_all_archived(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<A
         "SELECT * FROM article WHERE user_id = $1 AND archived",
         user_id
     )
-    .fetch_all(db)
-    .await?;
+        .fetch_all(db)
+        .await?;
 
     Ok(articles)
 }
@@ -178,8 +193,8 @@ pub async fn get_all_starred(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Ar
         "SELECT * FROM article WHERE user_id = $1 AND starred",
         user_id
     )
-    .fetch_all(db)
-    .await?;
+        .fetch_all(db)
+        .await?;
 
     Ok(articles)
 }

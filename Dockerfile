@@ -19,7 +19,6 @@ USER manucure
 COPY --from=builder /manucure /usr/bin/manucure
 
 # Install assets
-COPY migrations /opt/manucure/migrations
 COPY assets/ /opt/manucure/assets
 
 EXPOSE 3000

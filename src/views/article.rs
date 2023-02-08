@@ -47,12 +47,13 @@ pub async fn get_article(
 }
 
 pub async fn delete_article(
+    State(state): State<AppState>,
     user: Option<Oauth2User>,
     Extension(db): Extension<PgPool>,
     Path(id): Path<i64>,
 ) -> AppResult<Redirect> {
     let user = get_connected_user(user, &db).await?;
-    db::article::delete(user.id, id, &db).await?;
+    db::article::delete(user.id, id, state.meili_client, &db).await?;
 
     Ok(Redirect::to("/"))
 }

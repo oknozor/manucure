@@ -43,7 +43,13 @@ pub struct AuthSettings {
 
 impl Settings {
     pub(crate) fn get() -> Result<Self, config::ConfigError> {
-        let config_path = PathBuf::from("config.toml");
+        let etc_config = PathBuf::from("/etc/manucure/config.toml");
+        let config_path = if etc_config.exists() {
+            etc_config
+        } else {
+            PathBuf::from("config.toml")
+        };
+
         let config: Settings = Config::builder()
             .add_source(File::from(config_path))
             .build()?
