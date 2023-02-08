@@ -1,0 +1,11 @@
+apiVersion: v2
+name: manucure
+description: A Self-Hosted Alternative to Pocket
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+dependencies:
+  - name: meilisearch
+    version: 0.1.48
+    repository: https://meilisearch.github.io/meilisearch-kubernetes
