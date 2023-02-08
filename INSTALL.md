@@ -41,10 +41,10 @@ api_key = "my_api_key"
 [oauth_provider]
 client_id = "manucure"
 client_secret = "xZjWvaWPcHlglqcp5b19iLdke5sf9JG7"
-provider = "https://keycloak.cloud.hoohoot.org"
-user_info_url = "/auth/realms/hoohoot/protocol/openid-connect/userinfo"
-auth_url = "/auth/realms/hoohoot/protocol/openid-connect/auth"
-token_url = "/auth/realms/hoohoot/protocol/openid-connect/token"
+provider = "https://keycloak.cloud.me"
+user_info_url = "/auth/realms/me/protocol/openid-connect/userinfo"
+auth_url = "/auth/realms/me/protocol/openid-connect/auth"
+token_url = "/auth/realms/me/protocol/openid-connect/token"
 ```
 
 ### Docker compose

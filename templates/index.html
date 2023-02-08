@@ -5,14 +5,6 @@
     <div class="flex flex-row">
         {% include "nav.html" %}
         <div class="flex flex-col gap-4">
-            <form action="/articles/save">
-                <label></label>
-                <label>
-                    <input class="rounded-lg" type="text" name="url">
-                </label>
-                <input class="rounded-lg bg-slate-400 px-4 py-2" type="submit" value="Save">
-            </form>
-
             <h2 class="text-2xl font-bold">{{title}}</h2>
             <div class="flex flex-row">
                 <div class="grid md:grid-cols-4 sm:grid-cols-1 gap-5 justify-center content-center">
@@ -24,7 +16,7 @@
                             <div class="flex flex-row flex-wrap gap-x-2">
                                 <a href="{{article.url}}" class="text-sm text-sky-600 hover:underline">{{article.url|domain}}</a>
                                 <span class="text-sm text-slate-700">|</span>
-                                <span class="text-sm text-slate-700">{{article.text|read_time}}</span>
+                       quic         <span class="text-sm text-slate-700">{{article.text|read_time}}</span>
                             </div>
                             <span class="text-sm text-slate-700">Added {{article.created|date_format}}</span>
                         </div>

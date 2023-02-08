@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 use async_session::MemoryStore;
+use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::routing::get_service;
 use axum::Extension;
@@ -14,6 +15,7 @@ use axum::{
 use http::StatusCode;
 use meilisearch_sdk::client::Client as MeiliClient;
 use sqlx::postgres::PgPoolOptions;
+use sqlx::PgPool;
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::layer::SubscriberExt;
@@ -21,6 +23,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use views::{article, home};
 
 use crate::auth::oauth_client;
+use crate::errors::AppResult;
 use crate::settings::SETTINGS;
 use crate::state::AppState;
 
@@ -69,6 +72,7 @@ async fn main() -> anyhow::Result<()> {
         "assets"
     };
     let router = Router::new()
+        .route("/health", get(health))
         .route("/tags", get(home::tags))
         .route("/archive", get(home::archived))
         .route("/favorites", get(home::starred))
@@ -92,7 +96,7 @@ async fn main() -> anyhow::Result<()> {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], SETTINGS.port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], SETTINGS.port));
 
     axum::Server::bind(&addr)
         .serve(router.into_make_service())
@@ -103,6 +107,13 @@ async fn main() -> anyhow::Result<()> {
 
 async fn handle_error(_err: io::Error) -> impl IntoResponse {
     (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
+}
+
+pub async fn health(
+    State(_state): State<AppState>,
+    Extension(_db): Extension<PgPool>,
+) -> AppResult<()> {
+    Ok(())
 }
 
 #[cfg(test)]

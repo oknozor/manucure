@@ -13,6 +13,8 @@ FROM ${TARGETARCH}-builder AS builder
 
 FROM alpine
 MAINTAINER Paul Delafosse "paul.delafosse@protonmail.com"
+
+RUN addgroup -S manucure && adduser -S manucure -G manucure
 USER manucure
 
 # Install binaries

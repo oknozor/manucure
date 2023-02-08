@@ -6,12 +6,70 @@
     <link rel="stylesheet" href="/assets/tabler-icons.min.css">
 </head>
 <body>
-
+<div id="search-background" class="-z-50 w-full h-full absolute">
+    <div id="search-container"
+         class="relative bg-white invisible left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4 w-2/5 h-4/6">
+        <div id="search-content">
+            <div id="searchbox"></div>
+            <div id="hits"></div>
+        </div>
+    </div>
+</div>
 {% block content %}
 {% endblock %}
 </body>
-<script src="./assets/search.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch/dist/instant-meilisearch.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+<script src="/assets/search.js"></script>
+<script>
+    const initSearch = () => {
+        console.log("init search");
+        let search = document.getElementById("search-background");
+        search.classList.add("backdrop-blur-sm");
+        search.classList.remove("-z-50");
+        let wrapper = document.getElementById("search-container");
+        wrapper.classList.remove("invisible");
+        let closeSearchOnClick = function (e) {
+            let container = document.getElementById('search-content');
+            if (!container.contains(e.target)) {
+                quitSearch(closeSearchOnClick);
+            }
+        };
+
+        let closeSearchEscPressed = function (e) {
+            if (e.key === "Escape") {
+                quitSearch(closeSearchEscPressed)
+            } else {
+                return true;
+            }
+        };
+
+        document.addEventListener('keydown', closeSearchEscPressed);
+        document.addEventListener('click', closeSearchOnClick);
+    }
+    const quitSearch = (listener) => {
+        let search = document.getElementById("search-background");
+        search.classList.remove("backdrop-blur-sm");
+        search.classList.add("-z-50");
+        let wrapper = document.getElementById("search-container");
+        wrapper.classList.add("invisible");
+        document.removeEventListener("click", listener)
+    }
+
+    window.addEventListener('keydown', (event) => {
+        const keyName = event.key;
+        let search = document.getElementsByClassName("ais-SearchBox-input");
+        let searchInput = search.item(0);
+        if (event.ctrlKey && keyName === "k") {
+            initSearch()
+            event.preventDefault();
+            searchInput.focus();
+        } else if (event.key === "Escape") {
+            searchInput.blur();
+        } else {
+            return true;
+        }
+    });
+</script>
 </html>
 

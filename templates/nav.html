@@ -1,22 +1,23 @@
-<nav class="flex flex-col gap-1 r-5 pr-5 mr-5 border-r border-slate-300">
-  <button class="text-sm px-1 py-0.5 flex flex-row items-center
-  justify-between border border-slate-600 text-slate-500 rounded-md w-48">
+<nav class="flex flex-col gap-3 r-5 pr-5 mr-5 border-r border-slate-300">
+  <button onclick="initSearch()"
+          class="text-sm px-2 py-1 flex flex-row items-center
+  justify-around border border-slate-600 text-slate-500 rounded-md w-48">
     <i class="text-xl ti ti-search pb-1">
     </i>Quick search
-    <span class="font-bold">Ctrl L</span>
+    <span class="font-bold">Ctrl K</span>
   </button>
 
-  <h4 class="text-xl">Filters</h4>
+  <h4 class="text-xl border-b-2 border-slate-200 mb-3">Filters</h4>
   <script>
     const goToArchive = () => window.location.href = "/archive"
     const goToFavorites = () => window.location.href = "/favorites";
     const goToArticles = () => window.location.href = "/";
     const goToTags = () => window.location.href = "/tags";
 </script>
-  <ul class="flex flex-col divide-y divide-slate-200 content-center gap-2">
-    <li class="hover:underline" onclick="goToArticles()">Articles</li>
-    <li class="hover:underline" onclick="goToFavorites()">Starred</li>
-    <li class="hover:underline" onclick="goToArchive()">Archived</li>
-    <li class="hover:underline" onclick="goToTags()">Tags</li>
+  <ul class="flex flex-col divide-y divide-slate-200 ml-4 gap-2 justify-around ">
+    <li class="hover:underline pt-2" onclick="goToArticles()">Articles</li>
+    <li class="hover:underline pt-2" onclick="goToFavorites()">Starred</li>
+    <li class="hover:underline pt-2" onclick="goToArchive()">Archived</li>
+    <li class="hover:underline pt-2" onclick="goToTags()">Tags</li>
   </ul>
 </nav>

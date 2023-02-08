@@ -12,7 +12,7 @@ pub fn read_time<T: std::fmt::Display>(s: T) -> ::askama::Result<String> {
     let read_time = estimated_read_time::text(&s.to_string(), &Options::default());
     let minutes = read_time.seconds() / 60;
     if minutes == 0 {
-        Ok(format!("Less than a minute"))
+        Ok("Less than a minute".to_string())
     } else {
         Ok(format!("{minutes} min"))
     }

@@ -15,7 +15,7 @@ api_key = "fMuxK9AIppcbb6H08T]gm>YAz"
 
 [oauth_provider]
 client_id = "manucure"
-client_secret = "xZjWvaWPcHlglqcp5b19iLdke5sf9JG7"
+client_secret = "zB6L5Xw2C7ynDTDpWucCj58S71LPeMav"
 provider = "https://keycloak.cloud.hoohoot.org"
 user_info_url = "/auth/realms/hoohoot/protocol/openid-connect/userinfo"
 auth_url = "/auth/realms/hoohoot/protocol/openid-connect/auth"
