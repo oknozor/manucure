@@ -45,7 +45,6 @@ async fn main() -> anyhow::Result<()> {
 
     let connection_url = SETTINGS.database_url();
 
-    tracing::debug!("Connecting to {connection_url}");
     let db = PgPoolOptions::new()
         .max_connections(10)
         .idle_timeout(Duration::from_secs(3))
@@ -98,6 +97,7 @@ async fn main() -> anyhow::Result<()> {
 
     let addr = SocketAddr::from(([0, 0, 0, 0], SETTINGS.port));
 
+    tracing::debug!("Staring Manucure");
     axum::Server::bind(&addr)
         .serve(router.into_make_service())
         .await?;
