@@ -1,64 +1,6 @@
 {
   "db": "PostgreSQL",
-  "20a2f363b87e95d27bc9e5310f09750309832b67b396d12a24056a6bb66753da": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Int8",
-          "Int8"
-        ]
-      }
-    },
-    "query": "UPDATE article SET starred = false WHERE id = $1 AND user_id = $2"
-  },
-  "273254c239d7fb299159d4146f2bc18e7f6fc3506e2927d78af0146188a6baaa": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Int8",
-          "Int8"
-        ]
-      }
-    },
-    "query": "DELETE FROM article WHERE id = $1 AND user_id = $2"
-  },
-  "476f6a7d2a64ea7c73bb5a00fc05add29ddf4f8857b9acce6316f48d7fcecbab": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "username",
-          "ordinal": 1,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "email",
-          "ordinal": 2,
-          "type_info": "Varchar"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Text"
-        ]
-      }
-    },
-    "query": "SELECT * FROM users where email = $1"
-  },
-  "499b33d7be7ad45c52be1f7710e87f650279b45d71642f9d318d1cb3c24c9076": {
+  "06d959d58b969cb7f5b356a625d98c4c331cb4d4f516ded7994846cfa32d074f": {
     "describe": {
       "columns": [
         {
@@ -124,7 +66,133 @@
         ]
       }
     },
-    "query": "SELECT * FROM article WHERE user_id = $1 AND archived"
+    "query": "SELECT * FROM article WHERE user_id = $1 AND archived ORDER BY created DESC"
+  },
+  "20a2f363b87e95d27bc9e5310f09750309832b67b396d12a24056a6bb66753da": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE article SET starred = false WHERE id = $1 AND user_id = $2"
+  },
+  "273254c239d7fb299159d4146f2bc18e7f6fc3506e2927d78af0146188a6baaa": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "DELETE FROM article WHERE id = $1 AND user_id = $2"
+  },
+  "476f6a7d2a64ea7c73bb5a00fc05add29ddf4f8857b9acce6316f48d7fcecbab": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      }
+    },
+    "query": "SELECT * FROM users where email = $1"
+  },
+  "56fdd00f295a59458e967b9eca865dc30a3e867ec63509b7a902e9ca4d259978": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "url",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "title",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "text",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "content",
+          "ordinal": 5,
+          "type_info": "Text"
+        },
+        {
+          "name": "starred",
+          "ordinal": 6,
+          "type_info": "Bool"
+        },
+        {
+          "name": "archived",
+          "ordinal": 7,
+          "type_info": "Bool"
+        },
+        {
+          "name": "created",
+          "ordinal": 8,
+          "type_info": "Timestamp"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM article WHERE user_id = $1 AND NOT archived ORDER BY created DESC"
   },
   "61180d04fe9f585ee7eca072fc477a0290506c0e4cb486da1de063534b8fb1ac": {
     "describe": {
@@ -198,6 +266,74 @@
     },
     "query": "INSERT INTO article (url, user_id, text, content, title) VALUES ($1, $2, $3, $4, $5) RETURNING *"
   },
+  "8e8c827c23b55e871e366421dfdfc115dd5a88d6261ee7bb3b1343e65667ee28": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "url",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "title",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "text",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "content",
+          "ordinal": 5,
+          "type_info": "Text"
+        },
+        {
+          "name": "starred",
+          "ordinal": 6,
+          "type_info": "Bool"
+        },
+        {
+          "name": "archived",
+          "ordinal": 7,
+          "type_info": "Bool"
+        },
+        {
+          "name": "created",
+          "ordinal": 8,
+          "type_info": "Timestamp"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM article WHERE user_id = $1 AND starred ORDER BY created DESC"
+  },
   "93a100fa97d07c1b3f99a89b24d0c6969ef394076c0f7463ec66da0fd50a7638": {
     "describe": {
       "columns": [],
@@ -210,142 +346,6 @@
       }
     },
     "query": "UPDATE article SET starred = true WHERE id = $1 AND user_id = $2"
-  },
-  "a3cc6c84ebbe2d1b8d279a487a06dcaa157af56717abc0f596847d0214beec85": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "user_id",
-          "ordinal": 1,
-          "type_info": "Int8"
-        },
-        {
-          "name": "url",
-          "ordinal": 2,
-          "type_info": "Text"
-        },
-        {
-          "name": "title",
-          "ordinal": 3,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "text",
-          "ordinal": 4,
-          "type_info": "Text"
-        },
-        {
-          "name": "content",
-          "ordinal": 5,
-          "type_info": "Text"
-        },
-        {
-          "name": "starred",
-          "ordinal": 6,
-          "type_info": "Bool"
-        },
-        {
-          "name": "archived",
-          "ordinal": 7,
-          "type_info": "Bool"
-        },
-        {
-          "name": "created",
-          "ordinal": 8,
-          "type_info": "Timestamp"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "SELECT * FROM article WHERE user_id = $1 AND NOT archived"
-  },
-  "afd2486a616783ba2532a137fb864dab7baa6800e226f8c07a95170aead3079f": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "user_id",
-          "ordinal": 1,
-          "type_info": "Int8"
-        },
-        {
-          "name": "url",
-          "ordinal": 2,
-          "type_info": "Text"
-        },
-        {
-          "name": "title",
-          "ordinal": 3,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "text",
-          "ordinal": 4,
-          "type_info": "Text"
-        },
-        {
-          "name": "content",
-          "ordinal": 5,
-          "type_info": "Text"
-        },
-        {
-          "name": "starred",
-          "ordinal": 6,
-          "type_info": "Bool"
-        },
-        {
-          "name": "archived",
-          "ordinal": 7,
-          "type_info": "Bool"
-        },
-        {
-          "name": "created",
-          "ordinal": 8,
-          "type_info": "Timestamp"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "SELECT * FROM article WHERE user_id = $1 AND starred"
   },
   "c192a0cc8a9d4da0a2ba367e2ec094d2c6a723b3e8dd2de7999846e5a78195e5": {
     "describe": {

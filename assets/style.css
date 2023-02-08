@@ -30,19 +30,19 @@
 
 @layer components {
     #search-content {
-        @apply flex flex-col gap-2 p-3 rounded-md shadow-md border border-slate-500 h-full overflow-hidden
+        @apply flex flex-col gap-2 p-3 rounded-md shadow-md border border-slate-500 dark:border-slate-50 h-full overflow-hidden
     }
 
     .ais-SearchBox-form {
-        @apply flex flex-row border-2 border-slate-500 rounded-md p-1
+        @apply flex flex-row border-2 border-slate-500 dark:border-slate-50 rounded-md p-1
     }
 
     .ais-SearchBox-form:focus-within {
-       @apply ring-1 ring-blue-100 border-blue-600
+       @apply ring-1 ring-blue-100 border-blue-600 dark:border-sky-100
     }
 
     .ais-SearchBox-input {
-        @apply grow border-0 ring-0 shadow-none ring-offset-0 rounded-l-md
+        @apply grow border-0 ring-0 shadow-none ring-offset-0 rounded-l-md dark:text-slate-800
     }
 
     .ais-SearchBox-input:focus {
@@ -50,11 +50,11 @@
     }
 
     .ais-SearchBox-submit {
-        @apply grid w-6 place-content-center place-items-center order-first
+        @apply grid w-6 place-content-center place-items-center order-first dark:text-slate-50
     }
 
     .ais-SearchBox-reset {
-        @apply bg-white pr-2 rounded-r-md
+        @apply bg-white pr-2 rounded-r-md dark:text-slate-50
     }
 
     .ais-Hits, #hits, #hits > div, .ais-Hits-list {
@@ -62,7 +62,7 @@
     }
 
     .ais-Hits-list {
-        @apply flex flex-col divide-y divide-slate-300 gap-y-2 space-y-1 overflow-y-auto
+        @apply flex flex-col divide-y divide-slate-300 dark:divide-slate-100 gap-y-2 space-y-1 overflow-y-auto
     }
 
     .ais-Hits-item {
@@ -74,11 +74,11 @@
     }
 
     .hit-title {
-        @apply font-bold text-slate-700
+        @apply font-bold text-slate-700 dark:text-slate-50
     }
 
     .hit-text {
-        @apply text-sm text-slate-400
+        @apply text-sm text-slate-400 dark:text-slate-100
     }
 
     .ais-Highlight-highlighted, .ais-Snippet-highlighted {

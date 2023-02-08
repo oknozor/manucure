@@ -1,14 +1,25 @@
 <header id="nav-header" class="border-b border-slate-500">
+    <script>
+        const darkTheme = () => {
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark')
+        }
+        const lightTheme = () => {
+            localStorage.setItem('theme', 'light');
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
     <nav class="flex flex-row flex-wrap w-full items-center justify-between px-4 py-2">
         <h1 class="text-3xl font-bold">Manucure</h1>
         <div>
-            <i class="text-3xl ti ti-sun-low"></i>
-            <i class="text-3xl ti ti-moon-stars"></i>
+            <i onclick="lightTheme()" class="text-3xl ti ti-sun-low"></i>
+            <i onclick="darkTheme()" class="text-3xl ti ti-moon-stars"></i>
         </div>
 
         <form  class="flex flex-row" action="/articles/save">
             <input class="border border-r-0 border-slate-500 rounded-l-md
-                            focus:ring-0 focus:border focus:border-slate-500"
+                            focus:ring-0 focus:border focus:border-slate-500
+                            dark:text-slate-800"
                    type="text" name="url">
             <input class="bg-blue-300 border border-l-0 border-slate-500 rounded-r-md px-2" type="submit" value="Save">
         </form>

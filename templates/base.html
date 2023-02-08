@@ -4,11 +4,19 @@
     <title>Manucure</title>
     <link rel="stylesheet" href="/assets/tailwind.min.css">
     <link rel="stylesheet" href="/assets/tabler-icons.min.css">
+    <script>
+        const loadTheme = () => {
+            // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark')
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="dark:bg-slate-600 dark:text-slate-100" onload="loadTheme()">
 <div id="search-background" class="-z-50 w-full h-full absolute">
     <div id="search-container"
-         class="relative bg-white invisible left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4 w-2/5 h-4/6">
+         class="relative bg-white invisible left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4 w-2/5 h-4/6 dark:bg-slate-600 dark:text-slate-100">
         <div id="search-content">
             <div id="searchbox"></div>
             <div id="hits"></div>

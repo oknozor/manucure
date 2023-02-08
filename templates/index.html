@@ -14,11 +14,11 @@
                         <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
                         <div class="flex flex-col gap pt-3">
                             <div class="flex flex-row flex-wrap gap-x-2">
-                                <a href="{{article.url}}" class="text-sm text-sky-600 hover:underline">{{article.url|domain}}</a>
-                                <span class="text-sm text-slate-700">|</span>
-                       quic         <span class="text-sm text-slate-700">{{article.text|read_time}}</span>
+                                <a href="{{article.url}}" class="text-sm text-sky-600 dark:text-sky-300 hover:underline">{{article.url|domain}}</a>
+                                <span class="text-sm text-slate-700 dark:text-slate-100">|</span>
+                                <span class="text-sm text-slate-700 dark:text-slate-100">{{article.text|read_time}}</span>
                             </div>
-                            <span class="text-sm text-slate-700">Added {{article.created|date_format}}</span>
+                            <span class="text-sm text-slate-700 dark:text-slate-100">Added {{article.created|date_format}}</span>
                         </div>
                     </div>
                     {% endfor %}
