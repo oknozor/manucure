@@ -20,6 +20,7 @@ pub struct Settings {
 pub struct SearchSettings {
     pub url: String,
     pub api_key: String,
+    pub admin_key: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

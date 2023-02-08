@@ -165,7 +165,7 @@ pub async fn get_all_active(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Art
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
-        "SELECT * FROM article WHERE user_id = $1 AND NOT archived",
+        "SELECT * FROM article WHERE user_id = $1 AND NOT archived ORDER BY created DESC",
         user_id
     )
     .fetch_all(db)
@@ -178,7 +178,7 @@ pub async fn get_all_archived(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<A
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
-        "SELECT * FROM article WHERE user_id = $1 AND archived",
+        "SELECT * FROM article WHERE user_id = $1 AND archived ORDER BY created DESC",
         user_id
     )
     .fetch_all(db)
@@ -191,7 +191,7 @@ pub async fn get_all_starred(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Ar
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
-        "SELECT * FROM article WHERE user_id = $1 AND starred",
+        "SELECT * FROM article WHERE user_id = $1 AND starred ORDER BY created DESC",
         user_id
     )
     .fetch_all(db)

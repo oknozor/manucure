@@ -11,7 +11,8 @@ password = "postgres"
 
 [search_engine]
 url = "http://localhost:7700"
-api_key = "fMuxK9AIppcbb6H08T]gm>YAz"
+api_key = "a355999865ad9fa5b406eed605344e933324a75629a57e2e41549f6ac25db7d6"
+admin_key = "23f9f18e53c4bc3e5690ff67804389ca7af2b13fb49c1b4d0987efda53e9f05e"
 
 [oauth_provider]
 client_id = "manucure"

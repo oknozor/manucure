@@ -56,8 +56,13 @@ async fn main() -> anyhow::Result<()> {
 
     let store = MemoryStore::new();
     let oauth_client = oauth_client();
-    let meili_client =
-        MeiliClient::new(&SETTINGS.search_engine.url, &SETTINGS.search_engine.api_key);
+    let meili_client = MeiliClient::new(
+        &SETTINGS.search_engine.url,
+        &SETTINGS.search_engine.admin_key,
+    );
+
+    meili_client.create_index("articles", Some("id")).await?;
+
     let state = AppState {
         store,
         oauth_client,

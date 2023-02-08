@@ -10,6 +10,8 @@ You will also need to generate and API key for the instance.
 You can use [pass](https://www.passwordstore.org/) or any tool capable of generating strong passwords.
 Once done fill the `[search_engine]` fields accordingly. 
 
+Then you'll need to retrieve the generated API keys (see: [Meilisearch documenation -> Keys](https://docs.meilisearch.com/reference/api/keys.html#key-object))
+
 **OICD client**
 
 You need to configure a client on your Open ID Connect provider. 
@@ -36,7 +38,8 @@ password = "postgres"
 
 [search_engine]
 url = "search.manucure.org"
-api_key = "my_api_key"
+api_key = "a355999865ad9fa5b406eed605344e933324a75629a57e2e41549f6ac25db7d6"
+admin_key = "23f9f18e53c4bc3e5690ff67804389ca7af2b13fb49c1b4d0987efda53e9f05e"
 
 [oauth_provider]
 client_id = "manucure"
