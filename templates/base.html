@@ -20,6 +20,19 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch/dist/instant-meilisearch.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+<script>
+    const search = instantsearch({
+        indexName: "articles",
+        searchClient: instantMeiliSearch(
+            '{{meili_url|safe}}',
+            '{{meili_secret|safe}}',
+            {
+                primaryKey: 'id',
+                finitePagination: true,
+            }
+        )
+    });
+</script>
 <script src="/assets/search.js"></script>
 <script>
     const initSearch = () => {

@@ -3,6 +3,7 @@ use crate::db;
 use crate::db::article::{fetch_and_store, Article};
 use crate::db::user::get_connected_user;
 use crate::errors::AppResult;
+use crate::settings::SETTINGS;
 use crate::state::AppState;
 use crate::views::HtmlTemplate;
 use askama::Template;
@@ -32,6 +33,8 @@ pub async fn save(
 #[template(path = "article.html")]
 pub struct ArticleTemplate {
     article: Article,
+    meili_url: &'static str,
+    meili_secret: &'static str,
 }
 
 pub async fn get_article(
@@ -41,7 +44,11 @@ pub async fn get_article(
 ) -> AppResult<HtmlTemplate<ArticleTemplate>> {
     let user = get_connected_user(user, &db).await?;
     let article = db::article::get(user.id, id, &db).await?;
-    let template = ArticleTemplate { article };
+    let template = ArticleTemplate {
+        article,
+        meili_url: &SETTINGS.search_engine.url,
+        meili_secret: &SETTINGS.search_engine.api_key,
+    };
 
     Ok(HtmlTemplate(template))
 }

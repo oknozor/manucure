@@ -3,6 +3,7 @@ use crate::auth::Oauth2User;
 use crate::db::article::{get_all_active, get_all_archived, get_all_starred, Article};
 use crate::db::user::get_connected_user;
 use crate::errors::AppResult;
+use crate::settings::SETTINGS;
 use crate::views::HtmlTemplate;
 use askama::Template;
 use axum::Extension;
@@ -13,6 +14,8 @@ use sqlx::PgPool;
 pub struct HomePageTemplate {
     pub articles: Vec<Article>,
     pub title: &'static str,
+    meili_url: &'static str,
+    meili_secret: &'static str,
 }
 
 pub async fn articles(
@@ -24,6 +27,8 @@ pub async fn articles(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Saves",
+        meili_url: &SETTINGS.search_engine.url,
+        meili_secret: &SETTINGS.search_engine.api_key,
     }))
 }
 
@@ -36,6 +41,8 @@ pub async fn archived(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Archive",
+        meili_url: &SETTINGS.search_engine.url,
+        meili_secret: &SETTINGS.search_engine.api_key,
     }))
 }
 
@@ -48,6 +55,8 @@ pub async fn starred(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Favorites",
+        meili_url: &SETTINGS.search_engine.url,
+        meili_secret: &SETTINGS.search_engine.api_key,
     }))
 }
 
@@ -60,5 +69,7 @@ pub async fn tags(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Todo",
+        meili_url: &SETTINGS.search_engine.url,
+        meili_secret: &SETTINGS.search_engine.api_key,
     }))
 }
