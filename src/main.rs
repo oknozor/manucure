@@ -118,30 +118,3 @@ pub async fn health(
 ) -> AppResult<()> {
     Ok(())
 }
-
-#[cfg(test)]
-mod test {
-    use crate::db::article::Article;
-    use crate::settings::SETTINGS;
-
-    #[tokio::test]
-    async fn test() {
-        let client = meilisearch_sdk::client::Client::new(
-            &SETTINGS.search_engine.url,
-            &SETTINGS.search_engine.api_key,
-        );
-        let x = client.list_all_indexes().await;
-        println!("{:?}", x.unwrap());
-        println!(
-            "{:?}",
-            client
-                .index("articles")
-                .search()
-                .with_query("ko")
-                .execute::<Article>()
-                .await
-                .unwrap()
-                .hits
-        );
-    }
-}
