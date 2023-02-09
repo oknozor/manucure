@@ -6,14 +6,7 @@
     const archive = () => {
         fetch("/articles/{{article.id}}/archive", {
             method: "POST"
-        }).then(() => {
-            let button = document.getElementById("archive-button");
-            button.onclick = unarchive
-
-            let icon = document.getElementById("archive-icon");
-            icon.classList.remove("ti-archive")
-            icon.classList.add("ti-circle-plus")
-        })
+        }).then(() => window.location.href = "/")
     }
 
     const unarchive = () => {

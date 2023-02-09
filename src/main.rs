@@ -84,6 +84,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/articles/:id/star", post(article::star_article))
         .route("/articles/:id/unstar", post(article::unstar_article))
         .route("/articles/:id/archive", post(article::archive_article))
+        .route("/articles/:id/unarchive", post(article::unarchive_article))
         .route("/auth/manucure/", get(auth::openid_auth))
         .route("/auth/manucure", get(auth::openid_auth))
         .route("/auth/authorized/", get(auth::login_authorized))

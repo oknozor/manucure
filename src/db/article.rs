@@ -94,6 +94,20 @@ pub(crate) async fn archive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Resul
     Ok(())
 }
 
+pub(crate) async fn unarchive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+    sqlx::query_as!(
+        Article,
+        // language=PostgreSQL
+        "UPDATE article SET archived = false WHERE id = $1 AND user_id = $2",
+        id,
+        user_id
+    )
+    .execute(db)
+    .await?;
+
+    Ok(())
+}
+
 pub(crate) async fn star(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
     sqlx::query_as!(
         Article,

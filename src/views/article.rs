@@ -99,3 +99,14 @@ pub async fn archive_article(
 
     Ok(())
 }
+
+pub async fn unarchive_article(
+    user: Option<Oauth2User>,
+    Extension(db): Extension<PgPool>,
+    Path(id): Path<i64>,
+) -> AppResult<()> {
+    let user = get_connected_user(user, &db).await?;
+    db::article::unarchive(user.id, id, &db).await?;
+
+    Ok(())
+}
