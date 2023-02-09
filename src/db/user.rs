@@ -12,7 +12,7 @@ pub struct User {
     pub email: String,
 }
 
-pub(crate) async fn get_connected_user(user: Option<Oauth2User>, db: &PgPool) -> AppResult<User> {
+pub(crate) async fn get_connected_user(user: Option<&Oauth2User>, db: &PgPool) -> AppResult<User> {
     let Some(user) = user else {
         return Err(AppError::Unauthorized);
     };

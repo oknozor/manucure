@@ -78,13 +78,19 @@ async fn main() -> anyhow::Result<()> {
         .route("/tags", get(home::tags))
         .route("/archive", get(home::archived))
         .route("/favorites", get(home::starred))
-        .route("/articles/:id", get(article::get_article))
-        .route("/articles/save", get(article::save))
-        .route("/articles/:id/delete", get(article::delete_article))
-        .route("/articles/:id/star", post(article::star_article))
-        .route("/articles/:id/unstar", post(article::unstar_article))
-        .route("/articles/:id/archive", post(article::archive_article))
-        .route("/articles/:id/unarchive", post(article::unarchive_article))
+        .route("/articles/:id", get(article::get::article))
+        .route("/articles/save", get(article::get::save))
+        .route("/articles/:id/delete", get(article::get::delete_article))
+        .route("/articles/:id/star", post(article::post::star_article))
+        .route("/articles/:id/unstar", post(article::post::unstar_article))
+        .route(
+            "/articles/:id/archive",
+            post(article::post::archive_article),
+        )
+        .route(
+            "/articles/:id/unarchive",
+            post(article::post::unarchive_article),
+        )
         .route("/auth/manucure/", get(auth::openid_auth))
         .route("/auth/manucure", get(auth::openid_auth))
         .route("/auth/authorized/", get(auth::login_authorized))

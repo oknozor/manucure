@@ -9,12 +9,15 @@
             localStorage.setItem('theme', 'light');
             document.documentElement.classList.remove('dark')
         }
+        const home = () => {
+            window.location.href = "/";
+        }
     </script>
     <nav class="flex flex-row flex-wrap w-full justify-between px-4 py-2">
-        <h1 class="text-3xl font-bold">Manucure</h1>
+        <h1 class="text-3xl font-bold cursor-pointer" onclick="home()">Manucure</h1>
         <div>
-            <i onclick="lightTheme()" class="text-3xl ti ti-sun-low"></i>
-            <i onclick="darkTheme()" class="text-3xl ti ti-moon-stars"></i>
+            <i onclick="lightTheme()" class="cursor-pointer text-3xl ti ti-sun-low"></i>
+            <i onclick="darkTheme()" class="cursor-pointer text-3xl ti ti-moon-stars"></i>
         </div>
 
         <form class="hidden md:flex flex-row" action="/articles/save">

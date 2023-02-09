@@ -1,14 +1,56 @@
+use crate::auth::Oauth2User;
+use crate::views::HtmlTemplate;
+use askama::Template;
 use axum::response::{IntoResponse, Redirect, Response};
 use http::StatusCode;
 use tracing::error;
 
+// A Result that either returns T or an Error.
 pub type AppResult<T> = Result<T, AppError>;
+
+// A Result that either returns T or a Response.
+// used to serve Html template as error and redirect
+// on auth error
+pub type ViewResult<T> = Result<T, Response>;
 
 #[derive(Debug)]
 pub enum AppError {
     Internal(anyhow::Error),
     Unauthorized,
     NotFound,
+}
+
+#[derive(Template, Debug)]
+#[template(path = "error.html")]
+pub struct ErrorTemplate {
+    pub user: Option<Oauth2User>,
+    pub message: String,
+    pub code: i16,
+}
+
+impl ErrorTemplate {
+    pub(crate) fn to_response(error: AppError, user: Option<Oauth2User>) -> Response {
+        let template = match error {
+            AppError::Internal(_) => ErrorTemplate {
+                user,
+                message: "Internal server Error".to_string(),
+                code: 500,
+            },
+            AppError::Unauthorized => ErrorTemplate {
+                user,
+                message: "Please login".to_string(),
+                code: 401,
+            },
+            AppError::NotFound => ErrorTemplate {
+                user,
+                message: "Resource not found".to_string(),
+                code: 404,
+            },
+        };
+
+        let template = HtmlTemplate(template);
+        template.into_response()
+    }
 }
 
 impl<T> From<T> for AppError

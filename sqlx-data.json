@@ -68,6 +68,19 @@
     },
     "query": "SELECT * FROM article WHERE user_id = $1 AND archived ORDER BY created DESC"
   },
+  "1ee7afccb5410aaa6b28251652bf5a7e3817d881a185e148d65e09ea660e6b41": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE article SET archived = false WHERE id = $1 AND user_id = $2"
+  },
   "20a2f363b87e95d27bc9e5310f09750309832b67b396d12a24056a6bb66753da": {
     "describe": {
       "columns": [],

@@ -1,3 +1,4 @@
+use crate::errors::AppResult;
 use meilisearch_sdk::client::Client as MeiliClient;
 use readability::extractor::scrape;
 use serde::{Deserialize, Serialize};
@@ -34,7 +35,7 @@ pub struct ArticleWithTag {
     pub tags: Vec<Tag>,
 }
 
-pub(crate) async fn get(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<Article> {
+pub(crate) async fn get(user_id: i64, id: i64, db: &PgPool) -> AppResult<Article> {
     let article = sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -54,7 +55,7 @@ pub(crate) async fn delete(
     id: i64,
     meili_client: MeiliClient,
     db: &PgPool,
-) -> anyhow::Result<()> {
+) -> AppResult<()> {
     let mut transaction = db.begin().await?;
 
     sqlx::query_as!(
@@ -80,7 +81,7 @@ pub(crate) async fn delete(
     Ok(())
 }
 
-pub(crate) async fn archive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+pub(crate) async fn archive(user_id: i64, id: i64, db: &PgPool) -> AppResult<()> {
     sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -94,7 +95,7 @@ pub(crate) async fn archive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Resul
     Ok(())
 }
 
-pub(crate) async fn unarchive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+pub(crate) async fn unarchive(user_id: i64, id: i64, db: &PgPool) -> AppResult<()> {
     sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -108,7 +109,7 @@ pub(crate) async fn unarchive(user_id: i64, id: i64, db: &PgPool) -> anyhow::Res
     Ok(())
 }
 
-pub(crate) async fn star(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+pub(crate) async fn star(user_id: i64, id: i64, db: &PgPool) -> AppResult<()> {
     sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -122,7 +123,7 @@ pub(crate) async fn star(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<(
     Ok(())
 }
 
-pub(crate) async fn unstar(user_id: i64, id: i64, db: &PgPool) -> anyhow::Result<()> {
+pub(crate) async fn unstar(user_id: i64, id: i64, db: &PgPool) -> AppResult<()> {
     sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -141,7 +142,7 @@ pub async fn fetch_and_store(
     url: &str,
     meili_client: MeiliClient,
     db: &PgPool,
-) -> anyhow::Result<()> {
+) -> AppResult<()> {
     let url = url.to_owned();
     let article = scrape(&url).await?;
     let mut transaction = db.begin().await?;
@@ -177,7 +178,7 @@ pub async fn fetch_and_store(
     Ok(())
 }
 
-pub async fn get_all_active(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Article>> {
+pub async fn get_all_active(user_id: i64, db: &PgPool) -> AppResult<Vec<Article>> {
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -190,7 +191,7 @@ pub async fn get_all_active(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Art
     Ok(articles)
 }
 
-pub async fn get_all_archived(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Article>> {
+pub async fn get_all_archived(user_id: i64, db: &PgPool) -> AppResult<Vec<Article>> {
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -203,7 +204,7 @@ pub async fn get_all_archived(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<A
     Ok(articles)
 }
 
-pub async fn get_all_starred(user_id: i64, db: &PgPool) -> anyhow::Result<Vec<Article>> {
+pub async fn get_all_starred(user_id: i64, db: &PgPool) -> AppResult<Vec<Article>> {
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
