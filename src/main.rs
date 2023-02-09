@@ -61,8 +61,6 @@ async fn main() -> anyhow::Result<()> {
         &SETTINGS.search_engine.admin_key,
     );
 
-    meili_client.create_index("articles", Some("id")).await?;
-
     let state = AppState {
         store,
         oauth_client,

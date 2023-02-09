@@ -33,6 +33,7 @@ pub async fn save(
 #[template(path = "article.html")]
 pub struct ArticleTemplate {
     article: Article,
+    user_index: String,
     meili_url: &'static str,
     meili_secret: &'static str,
 }
@@ -46,6 +47,7 @@ pub async fn get_article(
     let article = db::article::get(user.id, id, &db).await?;
     let template = ArticleTemplate {
         article,
+        user_index: format!("articles-{}", user.id),
         meili_url: &SETTINGS.search_engine.url,
         meili_secret: &SETTINGS.search_engine.api_key,
     };

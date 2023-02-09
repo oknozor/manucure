@@ -31,7 +31,7 @@
 <script src="/assets/instantsearch.production.min.js"></script>
 <script>
     const search = instantsearch({
-        indexName: "articles",
+        indexName: "{{user_index}}",
         searchClient: instantMeiliSearch(
             '{{meili_url|safe}}',
             '{{meili_secret|safe}}',

@@ -12,8 +12,9 @@ use sqlx::PgPool;
 #[derive(Template, Debug)]
 #[template(path = "index.html")]
 pub struct HomePageTemplate {
-    pub articles: Vec<Article>,
-    pub title: &'static str,
+    articles: Vec<Article>,
+    title: &'static str,
+    user_index: String,
     meili_url: &'static str,
     meili_secret: &'static str,
 }
@@ -27,6 +28,7 @@ pub async fn articles(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Saves",
+        user_index: format!("articles-{}", user.id),
         meili_url: &SETTINGS.search_engine.url,
         meili_secret: &SETTINGS.search_engine.api_key,
     }))
@@ -41,6 +43,7 @@ pub async fn archived(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Archive",
+        user_index: format!("articles-{}", user.id),
         meili_url: &SETTINGS.search_engine.url,
         meili_secret: &SETTINGS.search_engine.api_key,
     }))
@@ -55,6 +58,7 @@ pub async fn starred(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Favorites",
+        user_index: format!("articles-{}", user.id),
         meili_url: &SETTINGS.search_engine.url,
         meili_secret: &SETTINGS.search_engine.api_key,
     }))
@@ -69,6 +73,7 @@ pub async fn tags(
     Ok(HtmlTemplate(HomePageTemplate {
         articles,
         title: "Todo",
+        user_index: format!("articles-{}", user.id),
         meili_url: &SETTINGS.search_engine.url,
         meili_secret: &SETTINGS.search_engine.api_key,
     }))

@@ -67,8 +67,9 @@ pub(crate) async fn delete(
     .execute(&mut transaction)
     .await?;
 
+    let user_index = format!("articles-{user_id}");
     tokio::spawn(async move {
-        match meili_client.index("articles").delete_document(id).await {
+        match meili_client.index(user_index).delete_document(id).await {
             Ok(task) => debug!("Article indexed: {task:?}"),
             Err(err) => error!("Indexation failed for article {id}: {err}"),
         };
@@ -146,8 +147,9 @@ pub async fn fetch_and_store(
 
     tokio::spawn(async move {
         let id = article.id;
+        let user_index = format!("articles-{user_id}");
         match meili_client
-            .index("articles")
+            .index(&user_index)
             .add_documents(&[article], Some("id"))
             .await
         {
