@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use config::{Config, File};
+use config::{Config, Environment, File};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
@@ -44,19 +44,23 @@ pub struct AuthSettings {
 
 impl Settings {
     pub(crate) fn get() -> Result<Self, config::ConfigError> {
+        let mut config = Config::builder().add_source(
+            Environment::with_prefix("MANUCURE")
+                .try_parsing(true)
+                .separator("_"),
+        );
+
         let etc_config = PathBuf::from("/etc/manucure/config.toml");
-        let config_path = if etc_config.exists() {
-            etc_config
-        } else {
-            PathBuf::from("config.toml")
-        };
+        if etc_config.exists() {
+            config = config.add_source(File::from(etc_config));
+        }
 
-        let config: Settings = Config::builder()
-            .add_source(File::from(config_path))
-            .build()?
-            .try_deserialize()?;
+        let default_config = PathBuf::from("config.toml");
+        if default_config.exists() {
+            config = config.add_source(File::from(default_config));
+        }
 
-        Ok(config)
+        config.build()?.try_deserialize()
     }
 
     pub fn database_url(&self) -> String {
