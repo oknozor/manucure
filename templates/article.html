@@ -36,29 +36,33 @@
     const star = () => {
         fetch("/articles/{{article.id}}/star", {
             method: "POST"
-        }).then(() => {
-            let button = document.getElementById("star-button");
-            button.onclick = unstar
-
-            let icon = document.getElementById("star-icon");
-            icon.classList.remove("ti-star");
-            icon.classList.add("text-yellow-300");
-            icon.classList.add("ti-star-filled");
         })
+            .catch(err => console.error(err))
+            .then(() => {
+                let button = document.getElementById("star-button");
+                button.onclick = unstar
+
+                let unstarredIcon = document.getElementById("star-icon");
+                unstarredIcon.classList.remove("ti-star");
+                unstarredIcon.classList.add("text-yellow-300");
+                unstarredIcon.classList.add("ti-star-filled");
+            })
     }
 
     const unstar = () => {
         fetch("/articles/{{article.id}}/unstar", {
             method: "POST"
-        }).then(() => {
-            let button = document.getElementById("star-button");
-            button.onclick = star
-
-            let icon = document.getElementById("star-icon");
-            icon.classList.remove("text-yellow-300");
-            icon.classList.remove("ti-star-filled");
-            icon.classList.add("ti-star");
         })
+            .catch(err => console.error(err))
+            .then(() => {
+                let button = document.getElementById("star-button");
+                button.onclick = star
+
+                let starredIcon = document.getElementById("star-icon");
+                starredIcon.classList.remove("text-yellow-300");
+                starredIcon.classList.remove("ti-star-filled");
+                starredIcon.classList.add("ti-star");
+            })
     }
 
     const share = () => {
@@ -69,7 +73,6 @@
         })
     }
 </script>
-
 <nav class="dark:bg-slate-600 fixed md:static top-0 w-full md:block">
     <div class="mx-auto md:mx-0 flex flex-row gap-4 content-center justify-center border-b border-gray-400 mb-10">
         <a href="/">
@@ -117,7 +120,7 @@
         </button>
         {% else %}
         <button id="star-button" onclick=star()>
-            <i id=star-icon" class="has-tooltip text-3xl ti ti-star">
+            <i id="star-icon" class="has-tooltip text-3xl ti ti-star">
                 <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Add to favorites</span>
             </i>
         </button>
@@ -130,5 +133,4 @@
         {{article.content|safe}}
     </article>
 </section>
-</body>
 {% endblock %}
