@@ -1898,6 +1898,7 @@ dependencies = [
 [[package]]
 name = "readability"
 version = "0.2.0"
+source = "git+https://github.com/oknozor/readability#00a0b44fe250bf485f9d8337f1d2dc515af96db4"
 dependencies = [
  "html5ever",
  "lazy_static",
