@@ -75,7 +75,7 @@
     }
 
     .hit-item {
-        @apply p-2 cursor-pointer hover:bg-sky-100 hover:rounded-md
+        @apply p-2 cursor-pointer hover:bg-sky-100 dark:hover:bg-slate-400 hover:rounded-md
     }
 
     .ais-Hits-item:active {

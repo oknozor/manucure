@@ -50,16 +50,17 @@
             window.location.href = "/";
         }
     </script>
-    <nav class="flex flex-row flex-wrap w-full justify-between px-4">
+    <nav class="flex flex-row flex-wrap w-full justify-between px-4 h-12 items-center overflow-hidden">
         <h1 class=" self-center text-3xl font-bold cursor-pointer" onclick="home()">Manucure</h1>
         <button id="switch-theme"></button>
         <script>setThemeButton()</script>
-        <form class="hidden md:flex flex-row" action="/articles/save">
-            <input class="border border-r-0 border-slate-500 rounded-l-md
-                            focus:ring-0 focus:border focus:border-slate-500
-                            dark:text-slate-800"
+        <form class="hidden md:flex flex-row h-4/6 border dark:border-slate-600 border-slate-700
+            dark:focus-within:border-blue-600 focus-within:border-blue-600 rounded-md bg-white overflow-hidden"
+              action="/articles/save">
+            <input class="box-border shadow-none ring-0 border-0 ml-1 my-2
+                focus:shadow-none focus:ring-0 focus:border-0 dark:text-slate-800"
                    type="text" name="url">
-            <input class="bg-blue-300 border border-l-0 border-slate-500 rounded-r-md px-2" type="submit" value="Save">
+            <input class="box-border bg-blue-300 px-1" type="submit" value="Save">
         </form>
         <div class="md:hidden flex flex-row gap-3">
             <script>
