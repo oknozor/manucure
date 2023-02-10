@@ -1,6 +1,43 @@
 {% extends "base.html" %}
 {% block nav %}
 <script>
+    let starContent = `<svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-star" width="24"
+                         height="24"
+                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
+                    </svg>
+                    <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Add to favorites</span>`;
+
+    let unstarContent = `<svg xmlns="http://www.w3.org/2000/svg" class="icon dark:fill-amber-400 fill-yellow-300 scale-90 icon-tabler icon-tabler-star-filled" width="24"
+                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
+                    </svg>
+                    <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Remove from favorites</span>`;
+
+    let archiveContent = `<svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-archive" width="24"
+                              height="24"
+                              viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                              stroke-linejoin="round">
+                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                             <path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+                             <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10"></path>
+                             <path d="M10 12l4 0"></path>
+                         </svg>
+                         <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Archive article</span>`
+
+    let unarchiveContent = `<svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-circle-plus" width="24"
+                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                                <path d="M9 12l6 0"></path>
+                                <path d="M12 9l0 6"></path>
+                            </svg>
+                            <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Re-add to save list</span>`
     const archive = () => {
         fetch("/articles/{{article.id}}/archive", {
             method: "POST"
@@ -13,13 +50,17 @@
         }).then(() => {
             let button = document.getElementById("archive-button");
             button.onclick = archive
-
-            let icon = document.getElementById("archive-icon");
-            icon.classList.remove("ti-circle-plus")
-            icon.classList.add("ti-archive")
+            button.innerHTML = archiveContent;
         })
     }
 
+    const deleteArticle = () => {
+        window.location.href = "/articles/{{article.id}}/delete"
+    }
+
+    const home = () => {
+        window.location.href = "/"
+    }
     const tag = () => {
         // TODO
     }
@@ -32,11 +73,7 @@
             .then(() => {
                 let button = document.getElementById("star-button");
                 button.onclick = unstar
-
-                let unstarredIcon = document.getElementById("star-icon");
-                unstarredIcon.classList.remove("ti-star");
-                unstarredIcon.classList.add("text-yellow-300");
-                unstarredIcon.classList.add("ti-star-filled");
+                button.innerHTML = unstarContent
             })
     }
 
@@ -48,60 +85,66 @@
             .then(() => {
                 let button = document.getElementById("star-button");
                 button.onclick = star
-
-                let starredIcon = document.getElementById("star-icon");
-                starredIcon.classList.remove("text-yellow-300");
-                starredIcon.classList.remove("ti-star-filled");
-                starredIcon.classList.add("ti-star");
+                button.innerHTML = starContent
             })
     }
 </script>
 <nav class="bg-white dark:bg-slate-600 sticky top-0 md:relative w-full">
-    <div class="mx-auto md:mx-0 flex flex-row gap-4 content-center justify-center border-b border-gray-400">
-        <a href="/">
-            <i class="has-tooltip text-3xl ti ti-home">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Back to saves</span>
-            </i>
-        </a>
+    <div class="mx-auto md:mx-0 flex flex-row gap-4 content-center justify-center border-b border-gray-400 py-2">
+        <button class="has-tooltip" onclick="home()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-home" width="24"
+                 height="24"
+                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+            </svg>
+            <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Back to saves</span>
+        </button>
 
-        <a href="/articles/{{article.id}}/delete">
-            <i class="has-tooltip text-3xl ti ti-trash">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Delete from library</span>
-            </i>
-        </a>
+        <button class="has-tooltip" onclick="deleteArticle()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-trash" width="24"
+                 height="24"
+                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M4 7l16 0"></path>
+                <path d="M10 11l0 6"></path>
+                <path d="M14 11l0 6"></path>
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+            </svg>
+            <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Delete from library</span>
+        </button>
 
-        <button onclick=tag()>
-            <i class="has-tooltip text-3xl ti ti-tag">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Tag article</span>
-            </i>
+        <button class="has-tooltip" onclick=tag()>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-tag" width="24"
+                 height="24"
+                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <circle cx="8.5" cy="8.5" r="1" fill="currentColor"></circle>
+                <path d="M4 7v3.859c0 .537 .213 1.052 .593 1.432l8.116 8.116a2.025 2.025 0 0 0 2.864 0l4.834 -4.834a2.025 2.025 0 0 0 0 -2.864l-8.117 -8.116a2.025 2.025 0 0 0 -1.431 -.593h-3.859a3 3 0 0 0 -3 3z"></path>
+            </svg>
+            <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Tag article</span>
         </button>
 
         {% if article.archived %}
-        <button id="archive-button" onclick=unarchive()>
-            <i id="archive-icon" class="has-tooltip text-3xl ti ti-circle-plus">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Re-add to save list</span>
-            </i>
-        </button>
+            <button class="has-tooltip" id="archive-button" onclick=unarchive()></button>
+            <script>document.getElementById("archive-button").innerHTML = unarchiveContent</script>
         {% else %}
-        <button id="archive-button" onclick=archive()>
-            <i id=archive-icon" class="has-tooltip text-3xl ti ti-archive">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Archive article</span>
-            </i>
-        </button>
+            <button class="has-tooltip" id="archive-button" onclick=archive()></button>
+            <script>document.getElementById("archive-button").innerHTML = archiveContent</script>
         {% endif %}
 
         {% if article.starred %}
-        <button id="star-button" onclick=unstar()>
-            <i id="star-icon" class="has-tooltip text-yellow-300 text-3xl ti ti-star-filled">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Remove from favorites</span>
-            </i>
-        </button>
+            <button class="has-tooltip" id="star-button" onclick=unstar()></button>
+            <script>document.getElementById("star-button").innerHTML = unstarContent</script>
         {% else %}
-        <button id="star-button" onclick=star()>
-            <i id="star-icon" class="has-tooltip text-3xl ti ti-star">
-                <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Add to favorites</span>
-            </i>
-        </button>
+            <button class="has-tooltip" id="star-button" onclick=star()></button>
+            <script>document.getElementById("star-button").innerHTML = starContent</script>
         {% endif %}
     </div>
 </nav>

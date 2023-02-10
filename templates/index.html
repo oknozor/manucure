@@ -8,14 +8,16 @@
     <div id="article-list" class="flex flex-col gap-4">
         <h2 class="text-2xl font-bold">{{title}}</h2>
         <div class="flex flex-row">
-            <div class="grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 justify-center content-center">
+            <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 justify-center content-center">
                 {% for article in articles %}
                 <div class="flex flex-col justify-around gap rounded-lg border border-slate-300 shadow-lg
                     space-y-4 px-4 py-2 divide-slate-200 divide-y">
                     <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
                     <div class="flex flex-col gap pt-3">
                         <div class="flex flex-row flex-wrap gap-x-2">
-                            <a href="{{article.url}}" class="text-sm text-sky-600 dark:text-sky-300 hover:underline">{{article.url|domain}}</a>
+                            <a href="{{article.url}}" class="text-sm text-sky-600 dark:text-sky-300 hover:underline text-ellipsis overflow-hidden ...">
+                                {{article.url|domain}}
+                            </a>
                             <span class="text-sm text-slate-700 dark:text-slate-100">|</span>
                             <span class="text-sm text-slate-700 dark:text-slate-100">{{article.text|read_time}}</span>
                         </div>

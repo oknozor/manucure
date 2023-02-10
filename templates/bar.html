@@ -1,25 +1,59 @@
 <header id="nav-header" class="dark:bg-slate-600 bg-white fixed md:static top-0 border-b
                                 border-slate-500 w-full">
     <script>
+        let moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="hover:drop-shadow-2xl icon icon-tabler icon-tabler-moon-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" fill="currentColor" />
+                        </svg>`
+
+        let sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="hover:drop-shadow-2xl icon icon-tabler icon-tabler-sun-high" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                          <path d="M14.828 14.828a4 4 0 1 0 -5.656 -5.656a4 4 0 0 0 5.656 5.656z" />
+                          <path d="M6.343 17.657l-1.414 1.414" />
+                          <path d="M6.343 6.343l-1.414 -1.414" />
+                          <path d="M17.657 6.343l1.414 -1.414" />
+                          <path d="M17.657 17.657l1.414 1.414" />
+                          <path d="M4 12h-2" />
+                          <path d="M12 4v-2" />
+                          <path d="M20 12h2" />
+                          <path d="M12 20v2" />
+                        </svg>`
+        const setThemeButton = () => {
+            let theme = localStorage.getItem("theme");
+            if (theme === "dark") {
+                let themeSwitchButton = document.getElementById("switch-theme");
+                themeSwitchButton.onclick = lightTheme
+                themeSwitchButton.innerHTML = sunIcon;
+            } else {
+                let themeSwitchButton = document.getElementById("switch-theme");
+                themeSwitchButton.onclick = darkTheme
+                themeSwitchButton.innerHTML = moonIcon
+            }
+        }
+
         const darkTheme = () => {
             localStorage.setItem('theme', 'dark');
             document.documentElement.classList.add('dark')
+            let themeSwitchButton = document.getElementById("switch-theme");
+            themeSwitchButton.onclick = lightTheme
+            themeSwitchButton.innerHTML = sunIcon
         }
         const lightTheme = () => {
             localStorage.setItem('theme', 'light');
             document.documentElement.classList.remove('dark')
+            let themeSwitchButton = document.getElementById("switch-theme");
+            themeSwitchButton.onclick = darkTheme
+            themeSwitchButton.innerHTML = moonIcon
         }
+
         const home = () => {
             window.location.href = "/";
         }
     </script>
-    <nav class="flex flex-row flex-wrap w-full justify-between px-4 py-2">
-        <h1 class="text-3xl font-bold cursor-pointer" onclick="home()">Manucure</h1>
-        <div>
-            <i onclick="lightTheme()" class="cursor-pointer text-3xl ti ti-sun-low"></i>
-            <i onclick="darkTheme()" class="cursor-pointer text-3xl ti ti-moon-stars"></i>
-        </div>
-
+    <nav class="flex flex-row flex-wrap w-full justify-between px-4">
+        <h1 class=" self-center text-3xl font-bold cursor-pointer" onclick="home()">Manucure</h1>
+        <button id="switch-theme"></button>
+        <script>setThemeButton()</script>
         <form class="hidden md:flex flex-row" action="/articles/save">
             <input class="border border-r-0 border-slate-500 rounded-l-md
                             focus:ring-0 focus:border focus:border-slate-500
@@ -27,15 +61,30 @@
                    type="text" name="url">
             <input class="bg-blue-300 border border-l-0 border-slate-500 rounded-r-md px-2" type="submit" value="Save">
         </form>
-        <div class="md:hidden">
+        <div class="md:hidden flex flex-row gap-3">
             <script>
                 const showMenu = () => {
                     document.getElementById("article-list").classList.add("hidden");
                     document.getElementById("nav-menu").classList.remove("hidden");
                 }
             </script>
-            <button onclick="quickSearchButtonClicked()"><i class="h-full text-3xl ti ti-search"></i></button>
-            <button onclick="showMenu()"><i class="h-full text-3xl ti ti-menu-2"></i></button>
+            <button onclick="quickSearchButtonClicked()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="dark:stroke-slate-100 icon icon-tabler icon-tabler-search"
+                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                    <path d="M21 21l-6 -6"></path>
+                </svg>
+            </button>
+            <button onclick="showMenu()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 6l16 0"></path>
+                    <path d="M4 12l16 0"></path>
+                    <path d="M4 18l16 0"></path>
+                </svg>
+            </button>
         </div>
     </nav>
 </header>

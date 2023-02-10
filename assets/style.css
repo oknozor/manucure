@@ -35,11 +35,11 @@
     }
 
     .ais-SearchBox-form {
-        @apply flex flex-row border-2 border-slate-500 dark:border-slate-50 rounded-md p-1 grow
+        @apply flex flex-row border-2 border-slate-500 dark:border-slate-50 rounded-md p-1 grow dark:bg-white
     }
 
     .ais-SearchBox-form:focus-within {
-       @apply ring-1 ring-blue-100 border-blue-600 dark:border-sky-100
+       @apply ring-1 ring-blue-100 border-blue-600 dark:border-sky-100 dark:ring-blue-400
     }
 
     .ais-SearchBox {
