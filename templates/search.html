@@ -17,7 +17,16 @@
 <script>
     const initSearch = () => {
         let search = document.getElementById("search-background");
-        search.classList.add("backdrop-blur-sm");
+        let isMobile = window.matchMedia("(max-width: 768px)");
+        if (isMobile.matches) {
+            let searchBoxReset = document.getElementsByClassName("ais-SearchBox-reset").item(0);
+            searchBoxReset.onclick = quitSearch;
+            searchBoxReset.classList.add("block");
+            search.classList.add("bg-white");
+            search.classList.add("dark:bg-slate-600");
+        } else {
+            search.classList.add("backdrop-blur-sm");
+        }
         search.classList.remove("-z-50");
         let wrapper = document.getElementById("search-container");
         wrapper.classList.remove("invisible");
@@ -48,7 +57,13 @@
         let searchInput = document.getElementsByClassName("ais-SearchBox-reset").item(0);
         searchInput.click();
         let search = document.getElementById("search-background");
-        search.classList.remove("backdrop-blur-sm");
+        let isMobile = window.matchMedia("(max-width: 768px)");
+        if (isMobile.matches) {
+            search.classList.remove("bg-white");
+            search.classList.remove("dark:bg-slate-600");
+        } else {
+            search.classList.remove("backdrop-blur-sm");
+        }
         search.classList.add("-z-50");
         let wrapper = document.getElementById("search-container");
         wrapper.classList.add("invisible");

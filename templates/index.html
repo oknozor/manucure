@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% block nav %}
+    {% include "bar.html" %}
+{% endblock %}
 {% block content %}
-{% include "bar.html" %}
 <main class="flex flex-row px-8 py-16 md:p-16 gap-3">
     {% include "nav.html" %}
     <div id="article-list" class="flex flex-col gap-4">

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "bar.html" %}
-<div class="p-14 flex flex-col gap-2">
+{% block nav %}
+    {% include "bar.html" %}
+{% endblock %}<div class="p-14 flex flex-col gap-2">
     <h1 class="text-2xl">Error {{code}}</h1>
     <span>{{message}}</span>
     <span>

@@ -14,18 +14,21 @@
     <link rel="stylesheet" href="/assets/tailwind.min.css">
     <link rel="stylesheet" href="/assets/tabler-icons.min.css">
 </head>
-<body class="dark:bg-slate-600 dark:text-slate-100" onload="loadTheme()">
+<body class="dark:bg-slate-600 dark:text-slate-100 flex flex-col gap-4" onload="loadTheme()">
+{% block nav %}{% endblock %}
+{% block content %}{% endblock %}
 <div id="search-background" class="-z-50 w-full h-full absolute">
-    <div id="search-container"
-         class="relative bg-white invisible left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4 w-2/5 h-4/6 dark:bg-slate-600 dark:text-slate-100">
-        <div id="search-content">
-            <div id="searchbox"></div>
-            <div id="hits"></div>
+    <div class="md:flex md:place-content-center md:mt-10">
+        <div id="search-container"
+             class="relative w-full h-full md:w-2/5 md:h-4/6 invisible dark:text-slate-100">
+            <div id="search-content">
+                <div id="searchbox"></div>
+                <div id="hits"></div>
+            </div>
         </div>
     </div>
+
 </div>
-{% block content %}
-{% endblock %}
 </body>
 {% block search %}
 {% include "search.html" %}
