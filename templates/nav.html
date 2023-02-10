@@ -1,6 +1,14 @@
 <nav id="nav-menu" class="hidden w-full h-full md:w-auto md:h-auto md:flex flex-col gap-3 r-5 md:pr-5
                             md:mr-5 md:border-r border-slate-300">
-    <button onclick="initSearch()"
+    <script>
+        const quickSearchButtonClicked = () => {
+            let search = document.getElementsByClassName("ais-SearchBox-input");
+            let searchInput = search.item(0);
+            initSearch()
+            searchInput.focus();
+        };
+    </script>
+    <button onclick="quickSearchButtonClicked()"
             class="hidden md:flex text-sm px-2 py-1 flex flex-row items-center
                    justify-around border border-slate-600 dark:border-slate-100
                    text-slate-500 dark:text-slate-100 rounded-md w-48">

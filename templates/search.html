@@ -24,28 +24,34 @@
         let closeSearchOnClick = function (e) {
             let container = document.getElementById('search-content');
             if (!container.contains(e.target)) {
-                quitSearch(closeSearchOnClick);
+                quitSearch();
             }
         };
 
         let closeSearchEscPressed = function (e) {
             if (e.key === "Escape") {
-                quitSearch(closeSearchEscPressed)
+                quitSearch()
             } else {
                 return true;
             }
         };
 
         document.addEventListener('keydown', closeSearchEscPressed);
-        document.addEventListener('click', closeSearchOnClick);
+
+        document.addEventListener('click', closeSearchOnClick, {
+            once: true,
+            capture: true
+        });
     }
-    const quitSearch = (listener) => {
+    const quitSearch = () => {
+        // Seems we can't use `input.value = ""` here
+        let searchInput = document.getElementsByClassName("ais-SearchBox-reset").item(0);
+        searchInput.click();
         let search = document.getElementById("search-background");
         search.classList.remove("backdrop-blur-sm");
         search.classList.add("-z-50");
         let wrapper = document.getElementById("search-container");
         wrapper.classList.add("invisible");
-        document.removeEventListener("click", listener)
     }
 
     window.addEventListener('keydown', (event) => {
