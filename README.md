@@ -2,6 +2,7 @@
 
 Welcome to the Manucure repository! Manucure is a free and open-source web application written in Rust that provides a self-hosted alternative to the popular bookmarking service, Pocket. With Manucure, you can save and organize your favorite web pages for later reading, all from the comfort of your own server.
 
+
 ## Features
 
 - Save and organize web pages for later reading
@@ -48,10 +49,13 @@ Create a bookmark in your browser and fill the URL field with the following:
 ```shell
 javascript:(function(){var url=location.href||url;var wllbg=window.open('http://localhost:3000/articles/save?url=' + encodeURIComponent(url),'_blank');})();
 ```
+
 ## Screenshots
 
-![Article Page](docs/article.png)
-![Article Page](docs/menu.png)
+![screenshot](docs/article-laptop.png)    
+![screenshot](docs/index-laptop.png)  
+![screenshot](docs/index-mobile.png)
+![search-mobile.png](docs/search-mobile.png)
 
 ## Contributing
 
