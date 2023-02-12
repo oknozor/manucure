@@ -16,7 +16,7 @@ use http::StatusCode;
 use meilisearch_sdk::client::Client as MeiliClient;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
-use tower_http::services::ServeDir;
+use tower_http::services::{ServeDir, ServeFile};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -73,6 +73,7 @@ async fn main() -> anyhow::Result<()> {
     } else {
         "assets"
     };
+
     let router = Router::new()
         .route("/health", get(health))
         .route("/tags", get(home::tags))
@@ -97,6 +98,10 @@ async fn main() -> anyhow::Result<()> {
         .route("/auth/authorized", get(auth::login_authorized))
         .route("/logout/", get(auth::logout))
         .route("/", get(home::articles))
+        .nest_service(
+            "/favicon.ico",
+            get_service(ServeFile::new("assets/favicon-32x32.png")).handle_error(handle_error),
+        )
         .nest_service(
             "/assets",
             get_service(ServeDir::new(asset_path)).handle_error(handle_error),

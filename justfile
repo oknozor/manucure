@@ -25,3 +25,6 @@ build-all: build-x86 build-arm-v7 build-arm-64
 
 docker-build: build-all
     docker buildx build --no-cache --push --platform linux/amd64,linux/arm/v7,linux/arm64/v8  . -t oknozor/manucure:latest
+
+tailwind:
+    tailwindcss -m -i assets/style.css -o assets/tailwind.min.css --watch
