@@ -27,5 +27,5 @@ EXPOSE 3000
 
 COPY ./docker/entrypoint.sh /entrypoint.sh
 
-CMD ["manucure"]
+CMD ["manucure serve"]
 ENTRYPOINT ["/entrypoint.sh"]

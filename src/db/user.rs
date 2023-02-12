@@ -5,11 +5,20 @@ use crate::{
     errors::{AppError, AppResult},
 };
 
-#[derive(sqlx::FromRow, Debug)]
+#[derive(sqlx::FromRow, Debug, Clone)]
 pub struct User {
     pub id: i64,
     pub username: String,
     pub email: String,
+}
+
+pub(crate) async fn all(db: &PgPool) -> AppResult<Vec<User>> {
+    // language=PostgreSQL
+    let users = sqlx::query_as!(User, "SELECT * FROM users")
+        .fetch_all(db)
+        .await?;
+
+    Ok(users)
 }
 
 pub(crate) async fn get_connected_user(user: Option<&Oauth2User>, db: &PgPool) -> AppResult<User> {

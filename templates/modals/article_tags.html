@@ -1,0 +1,177 @@
+{% let tag_index = tag_index.as_ref().unwrap() %}
+
+<script>
+    const currentTags = [];
+
+    const generateTagElement = (tagId, tagName) => {
+        return `<div id="tag-${tagId}" class="flex flex-row justify-between bg-slate-200 rounded-md p-2">
+            <span>${tagName}</span>
+            <button onClick="deleteTag(${tagId})">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon self-end scale-75 icon-tabler icon-tabler-x"
+                     width="24"
+                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M18 6l-12 12"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>`
+    }
+
+    const openTagModal = () => {
+        document.body.classList.add("overflow-hidden");
+        let background = document.getElementById("tag-modal-background");
+        background.classList.remove("-z-50");
+        background.classList.add("backdrop-blur-sm");
+
+        let modal = document.getElementById("tag-modal")
+        modal.classList.remove("invisible");
+
+        let closeModalOnClick = function (e) {
+            let container = document.getElementById('tag-modal');
+            if (!container.contains(e.target)) {
+                closeTagModal();
+            }
+        };
+
+        let closeModalOnEscPressed = function (e) {
+            if (e.key === "Escape") {
+                closeTagModal()
+            } else {
+                return true;
+            }
+        };
+
+        document.addEventListener('keydown', closeModalOnEscPressed, {
+            once: true
+        });
+
+        document.addEventListener('click', closeModalOnClick, {
+            once: true,
+            capture: true
+        });
+    }
+
+    const closeTagModal = () => {
+        document.body.classList.remove("overflow-hidden");
+        let background = document.getElementById("tag-modal-background");
+        background.classList.add("-z-50");
+        background.classList.remove("backdrop-blur-sm");
+
+        let modal = document.getElementById("tag-modal")
+        modal.classList.add("invisible");
+    }
+
+    const deleteTag = (tagId) => {
+        fetch(`/articles/{{article.id}}/tags/${tagId}`, {method: "DELETE"})
+            .catch(err => console.error(err))
+            .then(() => {
+                let idx = currentTags.indexOf(tagId);
+                if (idx > -1) {
+                    currentTags.splice(idx, 1);
+                }
+
+                document.getElementById(`tag-${tagId}`).remove()
+
+                // This is a bit ugly, but we don't have a meilisearch task callback
+                new Promise(resolve => setTimeout(resolve, 200)).then(() => {
+                    tagSearch.renderState['{{tag_index}}'].searchBox.clear()
+                });
+            });
+    }
+
+    const addTagToArticle = (tagId, tagName) => {
+        fetch(`/articles/{{article.id}}/tags/${tagId}`, {method: "POST"})
+            .catch(err => console.error(err))
+            .then(() => {
+                document.getElementById(`tag-hit-${tagId}`).remove();
+                document.getElementById("tag-list").innerHTML += generateTagElement(tagId, tagName)
+                currentTags.push(tagId)
+                tagSearch.renderState['{{tag_index}}'].searchBox.clear()
+            });
+    }
+</script>
+<div id="tag-modal-background" class="-z-50 w-full h-full absolute">
+    <div class="md:flex md:place-content-center md:mt-10">
+        <div id="tag-modal"
+             class="relative w-full h-full md:w-[40vw] md:max-h-[75vh] invisible dark:text-slate-100 bg-white border
+             border-slate-600 rounded-md flex flex-col gap-3 py-3">
+            <div class="flex flex-row justify-between px-4 border-b border-slate-300 pb-3">
+                <span class="text-xl font-bold">Edit tags</span>
+                <button onclick="closeTagModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-x" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="tag-list" class="flex flex-row flex-wrap gap-2 px-4"></div>
+            <script>
+                let tagList = document.getElementById("tag-list");
+                /* @formatter:off */
+                {% for tag in article.tags %}
+                currentTags.push({{tag.id}});
+                tagList.innerHTML += generateTagElement({{tag.id}}, "{{tag.name}}")
+                {% endfor %}
+                /* @formatter:on */
+            </script>
+            <div class="flex flex-col gap-2 pt-3 px-4 pb-4">
+                <label class="text-lg font-bold" for="tag-complete">Add tags</label>
+                <div id="tag-complete" class="flex flex-row pt-3"></div>
+                <div id="tag-search-hits"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tagSearch = instantsearch({
+        indexName: "{{tag_index}}",
+        searchClient: instantMeiliSearch(
+            '{{meili_url|safe}}',
+            '{{meili_secret|safe}}',
+            {
+                primaryKey: 'id',
+                finitePagination: true,
+            }
+        )
+    });
+
+    tagSearch.addWidgets([
+        instantsearch.widgets.searchBox({
+            container: "#tag-complete",
+            autofocus: true,
+        }),
+        instantsearch.widgets.configure({
+            hitsPerPage: 6,
+        }),
+        instantsearch.widgets.hits({
+            transformItems(items) {
+                return items.filter(item => !currentTags.includes(item.id));
+            },
+            container: "#tag-search-hits",
+            templates: {
+                item({ id, name, user_id }, { html }) {
+                    return html `<button onClick="${() => { addTagToArticle(id, name) }}"
+                        id="tag-hit-${id}" class="flex flex-row justify-between bg-slate-200 rounded-md p-2 rounded-md p-2">
+                         <span>${name}</span>
+                         <svg xmlns="http://www.w3.org/2000/svg"
+                             class="icon self-end scale-75 icon-tabler icon-tabler-circle-plus"
+                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                            <path d="M9 12l6 0"></path>
+                            <path d="M12 9l0 6"></path>
+                         </svg>
+                    </button>`
+                },
+            }
+        })
+    ]);
+
+    tagSearch.start();
+</script>

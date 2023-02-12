@@ -29,7 +29,7 @@ pub struct ErrorTemplate {
 }
 
 impl ErrorTemplate {
-    pub(crate) fn to_response(error: AppError, user: Option<Oauth2User>) -> Response {
+    pub(crate) fn response_from(error: AppError, user: Option<Oauth2User>) -> Response {
         let template = match error {
             AppError::Internal(_) => ErrorTemplate {
                 user,

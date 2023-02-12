@@ -2,7 +2,6 @@ const gotToArticle = (id) => {
     window.location.href = "/articles/" +id
 }
 
-
 search.addWidgets([
     instantsearch.widgets.searchBox({
         container: "#searchbox",

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block nav %}
+{% include "bar.html" %}
+{% endblock %}
+{% block content %}
+<script>
+    const filterTags = (value) => {
+        let input = value.toLowerCase();
+        const tagElements = document.getElementsByClassName('tag-container');
+
+        for (let nth in tagElements) {
+            let tagElement = tagElements[nth];
+            let textContent = tagElement.textContent;
+
+            if (!textContent) {
+                continue;
+            }
+
+            let tagName = textContent.trim().toLowerCase();
+
+            if (!tagName.includes(input)) {
+                tagElement.classList.add("hidden")
+            } else {
+                tagElement.classList.remove("hidden")
+            }
+        }
+    }
+
+    const tagSelected = [];
+    let currentPage;
+    const articlesForTags = (tagId) => {
+        let tagElementId = `tag-${tagId}`;
+        let tagElement = document.getElementById(tagElementId);
+
+        if (!tagSelected.includes(tagId)) {
+            tagSelected.push(tagId);
+            tagElement.classList.add("border-blue-300");
+        } else {
+            let idx = tagSelected.indexOf(tagId);
+            if (idx > -1) {
+                tagSelected.splice(idx, 1);
+            }
+
+            tagElement.classList.remove("border-blue-300");
+        }
+
+        if (tagSelected.length === 0) {
+            document.getElementById("article-items").innerHTML = "";
+        } else {
+            fetchArticleWithTagsPage(1);
+        }
+    }
+
+    const fetchArticleWithTagsPage = (page) => {
+        fetch(`/articles`, {
+            method: "POST",
+            body: JSON.stringify({
+                tags: tagSelected,
+                page,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .catch(err => console.error(err))
+            .then(response => response.json()
+                .catch(err => console.error(err))
+                .then(json => {
+                    currentPage = json.currentPage;
+                    let items = document.getElementById("article-items");
+                    items.innerHTML = "";
+                    json.items.forEach(article => items.innerHTML += generateArticleElement(article));
+                    document.getElementById("pagination").innerHTML =
+                        generatePaginationElement({
+                            pages: json.pages,
+                            currentPage: json.currentPage
+                        }, "fetchArticleWithTagsPage");
+                }))
+    }
+
+    const saveTags = () => {
+        let input = document.getElementById("new-tags").value;
+
+        let createTagPromise = fetch('/tags', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tags: input.split(" ")
+                    .filter(tag => tag.length > 0)
+            })
+        });
+
+        createTagPromise
+            .catch(err => console.error(err))
+            .then(response => response.json()
+                .catch(err => console.error(err))
+                .then(newTags => {
+                    newTags.forEach(tag => {
+                        document.getElementById("tag-list").innerHTML += generateTagElement(tag.id, tag.name);
+                    });
+                }));
+    }
+
+    const deleteTag = (tagId) => {
+        let deleteTagPromise = fetch(`/tags/${tagId}`, {
+            method: "DELETE",
+        });
+
+        deleteTagPromise
+            .catch(err => console.error(err))
+            .then(response => {
+                if (response.status === 200) {
+                    document.getElementById(`tag-${tagId}`).remove();
+                }
+            });
+    }
+
+    const generateTagElement = (tagId, tagName) => {
+        return `<div id="tag-${tagId}" class="flex flex-row justify-between bg-slate-200 rounded-md p-2 rounded-md p-2 border-4">
+                    <button id="tag-${tagId}}-filter" onclick="articlesForTags(${tagId})">
+                        <span>${tagName}</span>
+                    </button>
+                    <button onClick="deleteTag('${tagId}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon self-end scale-75 icon-tabler icon-tabler-x"
+                             width="24"
+                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M18 6l-12 12"></path>
+                            <path d="M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>`
+    }
+</script>
+<script src="/assets/article.js"></script>
+<main class="flex flex-row px-8 py-16 md:px-16 md:py-8 gap-3 w-full h-full">
+    {% include "nav.html" %}
+    <div class="flex flex-col gap-6 w-full">
+        <div class="flex flex-col gap-3 w-full">
+            <h2 class="text-2xl font-bold">Tags</h2>
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex flex-col gap-1 md:w-8/12">
+                    <label class="text-xl underline" for="tag-search">Search</label>
+                    <input id="tag-search" oninput="filterTags(this.value)" class="rounded-md h-12"
+                           type="search">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-xl underline" for="new-tags">New tag</label>
+                    <div class="flex flex-row border w-full md:w-96 h-12 dark:border-slate-600 border-slate-700
+            dark:focus-within:border-blue-600 focus-within:border-blue-600 rounded-md bg-white overflow-hidden">
+                        <input id="new-tags" class="box-border shadow-none ring-0 border-0 ml-1 my-2
+                focus:shadow-none focus:ring-0 focus:border-0 dark:text-slate-800 grow" type="search">
+                        <button onclick="saveTags()" class="box-border bg-blue-300 px-4">Save</button>
+                    </div>
+                </div>
+            </div>
+            <div id="tag-list" class="flex flex-row flex-wrap gap-2 pt-3 w-full  md:w-9/12"></div>
+            <script>
+                let tagList = document.getElementById("tag-list");
+                /* @formatter:off */
+                {% for tag in tags %}
+                tagList.innerHTML += generateTagElement({{tag.id}}, "{{tag.name}}")
+                {% endfor %}
+                /* @formatter:on */
+            </script>
+
+            <div id="article-items"
+                 class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 justify-center content-center"></div>
+            <div id="pagination" class="flex flex-row justify-center gap-2 text-center mt-10"></div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}
