@@ -139,74 +139,6 @@
     },
     "query": "SELECT * FROM users where email = $1"
   },
-  "56fdd00f295a59458e967b9eca865dc30a3e867ec63509b7a902e9ca4d259978": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "user_id",
-          "ordinal": 1,
-          "type_info": "Int8"
-        },
-        {
-          "name": "url",
-          "ordinal": 2,
-          "type_info": "Text"
-        },
-        {
-          "name": "title",
-          "ordinal": 3,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "text",
-          "ordinal": 4,
-          "type_info": "Text"
-        },
-        {
-          "name": "content",
-          "ordinal": 5,
-          "type_info": "Text"
-        },
-        {
-          "name": "starred",
-          "ordinal": 6,
-          "type_info": "Bool"
-        },
-        {
-          "name": "archived",
-          "ordinal": 7,
-          "type_info": "Bool"
-        },
-        {
-          "name": "created",
-          "ordinal": 8,
-          "type_info": "Timestamp"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "SELECT * FROM article WHERE user_id = $1 AND NOT archived ORDER BY created DESC"
-  },
   "61180d04fe9f585ee7eca072fc477a0290506c0e4cb486da1de063534b8fb1ac": {
     "describe": {
       "columns": [
@@ -278,6 +210,76 @@
       }
     },
     "query": "INSERT INTO article (url, user_id, text, content, title) VALUES ($1, $2, $3, $4, $5) RETURNING *"
+  },
+  "8090f6537a1a2ab79df12ca77c4054ba039f535af0a1b08cdf0c860a17f3635f": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "url",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "title",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "text",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "content",
+          "ordinal": 5,
+          "type_info": "Text"
+        },
+        {
+          "name": "starred",
+          "ordinal": 6,
+          "type_info": "Bool"
+        },
+        {
+          "name": "archived",
+          "ordinal": 7,
+          "type_info": "Bool"
+        },
+        {
+          "name": "created",
+          "ordinal": 8,
+          "type_info": "Timestamp"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM article\n         WHERE user_id = $1 AND NOT archived ORDER BY created DESC\n         LIMIT $2 OFFSET $3\n         "
   },
   "8e8c827c23b55e871e366421dfdfc115dd5a88d6261ee7bb3b1343e65667ee28": {
     "describe": {
@@ -462,6 +464,26 @@
     },
     "query": "SELECT id, user_id, url, title, text, starred, archived, created, content\n        FROM article WHERE id = $1 AND user_id = $2"
   },
+  "da592aa221d0ab7ce94a096604b26e2f70710b2da22853a66c2f15e8a9f71229": {
+    "describe": {
+      "columns": [
+        {
+          "name": "count",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT count(*) from article WHERE user_id = $1 AND archived"
+  },
   "daa1c99378f3cacfae47cd8ca61099e536a75f52e16a6edab8fc9934c5fa3acb": {
     "describe": {
       "columns": [],
@@ -474,5 +496,45 @@
       }
     },
     "query": "UPDATE article SET archived = true WHERE id = $1 AND user_id = $2"
+  },
+  "e4bd2983f6432c830e3443e7ee3aa76f6a6ed4e7b1fecb9ea57bcab5bb7eea4d": {
+    "describe": {
+      "columns": [
+        {
+          "name": "count",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT count(*) from article WHERE user_id = $1 AND starred"
+  },
+  "e72d6330e63fc2dc7c6ecea10bf421191240f82d09110ed76670ebcac35ffe19": {
+    "describe": {
+      "columns": [
+        {
+          "name": "count",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT count(*) from article WHERE user_id = $1 AND NOT archived"
   }
 }
