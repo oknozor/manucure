@@ -21,7 +21,7 @@
 }
 
 .tooltip {
-    @apply invisible absolute mt-10 -right-1/2 w-max;
+    @apply invisible absolute mt-1  -translate-x-1/2 left-1/2 w-max;
 }
 
 .has-tooltip:hover .tooltip {
