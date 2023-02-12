@@ -1,5 +1,14 @@
-# Manucure: A Self-Hosted Alternative to Pocket
+<p align="center">
+  <img
+    width="40%"
+    src="docs/manucure_text_logo.svg"
+    alt="Manucure logo"
+  />
+</p>
 
+<p align="center"> A Self-Hosted Alternative to Pocket</p>
+
+--- 
 Welcome to the Manucure repository! Manucure is a free and open-source web application written in Rust that provides a self-hosted alternative to the popular bookmarking service, Pocket. With Manucure, you can save and organize your favorite web pages for later reading, all from the comfort of your own server.
 
 

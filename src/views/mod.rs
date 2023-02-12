@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::response::{Html, IntoResponse, Response};
 use http::StatusCode;
+use serde::Deserialize;
 
 pub mod article;
 pub mod filters;
@@ -21,5 +22,17 @@ where
             )
                 .into_response(),
         }
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(default)]
+pub struct PageQuery {
+    pub page: i64,
+}
+
+impl Default for PageQuery {
+    fn default() -> Self {
+        PageQuery { page: 1 }
     }
 }

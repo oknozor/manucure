@@ -1,9 +1,17 @@
+use crate::db::Page;
 use crate::errors::AppResult;
 use meilisearch_sdk::client::Client as MeiliClient;
 use readability::extractor::scrape;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use tracing::{debug, error};
+
+#[derive(Debug)]
+pub struct ArticlesWithPagination {
+    pub items: Vec<Article>,
+    pub pages: Vec<i64>,
+    pub current_page: i64,
+}
 
 #[derive(sqlx::FromRow, sqlx::Type, Serialize, Deserialize, Debug)]
 pub struct Article {
@@ -178,20 +186,47 @@ pub async fn fetch_and_store(
     Ok(())
 }
 
-pub async fn get_all_active(user_id: i64, db: &PgPool) -> AppResult<Vec<Article>> {
+pub async fn get_all_active(
+    user_id: i64,
+    page: Page,
+    db: &PgPool,
+) -> AppResult<ArticlesWithPagination> {
+    let (limit, offset) = page.to_limit_offset();
+
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
-        "SELECT * FROM article WHERE user_id = $1 AND NOT archived ORDER BY created DESC",
-        user_id
+        r#"SELECT * FROM article
+         WHERE user_id = $1 AND NOT archived ORDER BY created DESC
+         LIMIT $2 OFFSET $3
+         "#,
+        user_id,
+        limit,
+        offset
     )
     .fetch_all(db)
     .await?;
 
-    Ok(articles)
+    let article_count = sqlx::query_scalar!(
+        // language=PostgreSQL
+        r#"SELECT count(*) from article WHERE user_id = $1 AND NOT archived"#,
+        user_id
+    )
+    .fetch_one(db)
+    .await?;
+
+    Ok(ArticlesWithPagination {
+        items: articles,
+        pages: page.get_pagination(article_count),
+        current_page: page.nth(),
+    })
 }
 
-pub async fn get_all_archived(user_id: i64, db: &PgPool) -> AppResult<Vec<Article>> {
+pub async fn get_all_archived(
+    user_id: i64,
+    page: Page,
+    db: &PgPool,
+) -> AppResult<ArticlesWithPagination> {
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -201,10 +236,26 @@ pub async fn get_all_archived(user_id: i64, db: &PgPool) -> AppResult<Vec<Articl
     .fetch_all(db)
     .await?;
 
-    Ok(articles)
+    let archive_count = sqlx::query_scalar!(
+        // language=PostgreSQL
+        r#"SELECT count(*) from article WHERE user_id = $1 AND archived"#,
+        user_id
+    )
+    .fetch_one(db)
+    .await?;
+
+    Ok(ArticlesWithPagination {
+        items: articles,
+        pages: page.get_pagination(archive_count),
+        current_page: page.nth(),
+    })
 }
 
-pub async fn get_all_starred(user_id: i64, db: &PgPool) -> AppResult<Vec<Article>> {
+pub async fn get_all_starred(
+    user_id: i64,
+    page: Page,
+    db: &PgPool,
+) -> AppResult<ArticlesWithPagination> {
     let articles = sqlx::query_as!(
         Article,
         // language=PostgreSQL
@@ -214,5 +265,17 @@ pub async fn get_all_starred(user_id: i64, db: &PgPool) -> AppResult<Vec<Article
     .fetch_all(db)
     .await?;
 
-    Ok(articles)
+    let stared_count = sqlx::query_scalar!(
+        // language=PostgreSQL
+        r#"SELECT count(*) from article WHERE user_id = $1 AND starred"#,
+        user_id
+    )
+    .fetch_one(db)
+    .await?;
+
+    Ok(ArticlesWithPagination {
+        items: articles,
+        pages: page.get_pagination(stared_count),
+        current_page: page.nth(),
+    })
 }
