@@ -38,6 +38,7 @@
                                 <path d="M12 9l0 6"></path>
                             </svg>
                             <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Re-add to save list</span>`
+
     const archive = () => {
         fetch("/articles/{{article.id}}/archive", {
             method: "POST"
@@ -60,9 +61,6 @@
 
     const home = () => {
         window.location.href = "/"
-    }
-    const tag = () => {
-        // TODO
     }
 
     const star = () => {
@@ -119,7 +117,7 @@
             <span class="tooltip rounded-md p-1 text-sm bg-neutral-800 text-zinc-50">Delete from library</span>
         </button>
 
-        <button class="has-tooltip" onclick=tag()>
+        <button class="has-tooltip" onclick=openTagModal()>
             <svg xmlns="http://www.w3.org/2000/svg" class="icon scale-90 icon-tabler icon-tabler-tag" width="24"
                  height="24"
                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -132,19 +130,19 @@
         </button>
 
         {% if article.archived %}
-            <button class="has-tooltip" id="archive-button" onclick=unarchive()></button>
-            <script>document.getElementById("archive-button").innerHTML = unarchiveContent</script>
+        <button class="has-tooltip" id="archive-button" onclick=unarchive()></button>
+        <script>document.getElementById("archive-button").innerHTML = unarchiveContent</script>
         {% else %}
-            <button class="has-tooltip" id="archive-button" onclick=archive()></button>
-            <script>document.getElementById("archive-button").innerHTML = archiveContent</script>
+        <button class="has-tooltip" id="archive-button" onclick=archive()></button>
+        <script>document.getElementById("archive-button").innerHTML = archiveContent</script>
         {% endif %}
 
         {% if article.starred %}
-            <button class="has-tooltip" id="star-button" onclick=unstar()></button>
-            <script>document.getElementById("star-button").innerHTML = unstarContent</script>
+        <button class="has-tooltip" id="star-button" onclick=unstar()></button>
+        <script>document.getElementById("star-button").innerHTML = unstarContent</script>
         {% else %}
-            <button class="has-tooltip" id="star-button" onclick=star()></button>
-            <script>document.getElementById("star-button").innerHTML = starContent</script>
+        <button class="has-tooltip" id="star-button" onclick=star()></button>
+        <script>document.getElementById("star-button").innerHTML = starContent</script>
         {% endif %}
     </div>
 </nav>
@@ -157,4 +155,5 @@
         {{article.content|safe}}
     </article>
 </section>
+{% include "modals/article_tags.html" %}
 {% endblock %}

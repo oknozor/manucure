@@ -4,8 +4,8 @@ use http::StatusCode;
 use serde::Deserialize;
 
 pub mod article;
-pub mod filters;
 pub mod home;
+pub mod tag;
 
 pub struct HtmlTemplate<T>(pub T);
 
@@ -29,6 +29,12 @@ where
 #[serde(default)]
 pub struct PageQuery {
     pub page: i64,
+}
+
+impl From<i64> for PageQuery {
+    fn from(page: i64) -> Self {
+        Self { page }
+    }
 }
 
 impl Default for PageQuery {

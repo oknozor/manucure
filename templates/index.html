@@ -3,65 +3,43 @@
 {% include "bar.html" %}
 {% endblock %}
 {% block content %}
-<main class="flex flex-row px-8 py-16 md:p-16 gap-3">
+
+<script src="/assets/article.js"></script>
+<main class="flex flex-row px-8 py-16 md:px-16 md:py-8 gap-3 w-full h-fit">
     {% include "nav.html" %}
-    <div id="article-list" class="flex flex-col gap-8">
-        <h2 class="text-2xl font-bold">{{title}}</h2>
-        <div class="flex flex-row">
-            <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 justify-center content-center">
-                {% for article in articles.items %}
-                <div class="flex flex-col justify-around gap rounded-lg border border-slate-300 shadow-lg
-                    space-y-4 px-4 py-2 divide-slate-200 divide-y">
-                    <h3><a href=./articles/{{article.id}}>{{article.title}}</a></h3>
-                    <div class="flex flex-col gap pt-3">
-                        <div class="flex flex-row flex-wrap gap-x-2">
-                            <a href="{{article.url}}"
-                               class="text-sm text-sky-600 dark:text-sky-300 hover:underline text-ellipsis overflow-hidden ...">
-                                {{article.url|domain}}
-                            </a>
-                            <span class="text-sm text-slate-700 dark:text-slate-100">|</span>
-                            <span class="text-sm text-slate-700 dark:text-slate-100">{{article.text|read_time}}</span>
-                        </div>
-                        <span class="text-sm text-slate-700 dark:text-slate-100">Added {{article.created|date_format}}</span>
-                    </div>
-                </div>
-                {% endfor %}
+    <div class="flex flex-col justify-between">
+        <div id="article-list" class="flex flex-col gap-8">
+            <h2 class="text-2xl font-bold">{{title}}</h2>
+            <div class="flex flex-row">
+                <div id="article-items"
+                     class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 justify-center content-center"></div>
+                <script>
+                    let items = document.getElementById("article-items");
+                    /* @formatter:off */
+                    {% for article in articles.items %}
+                    items.innerHTML += generateArticleElement({
+                        id: {{article.id}},
+                        title: '{{article.title}}',
+                        date: '{{article.date}}',
+                        domain: '{{article.domain}}',
+                        url: '{{article.url}}',
+                        readTime: '{{article.read_time}}'
+                    });
+                    {% endfor %}
+                    /* @formatter:on */
+                </script>
             </div>
         </div>
-        <div class="flex flex-row justify-center gap-2 text-center">
-            {% let last_page = articles.pages.len() -%}
-            {% let first_page = 1 -%}
-            <a href="/?page={{first_page}}" class="h-full rounded-md border border-slate-300 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     class="scale-90 stroke-sky-600 icon icon-tabler icon-tabler-chevrons-left"
-                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M11 7l-5 5l5 5"></path>
-                    <path d="M17 7l-5 5l5 5"></path>
-                </svg>
-            </a>
-
-            {% for page in articles.pages %}
-            {% if page.eq(articles.current_page) %}
-            <span class="text-center underline align-middle text-lg pb-0.5 pt-1 px-2 rounded-md border border-slate-300">{{articles.current_page}}</span>
-            {% else if page.gt(articles.current_page - 3) && page.lt(articles.current_page + 3) %}
-            <a class="text-center align-middle text-lg text-sky-600 pb-0.5 pt-1 px-2 rounded-md border border-slate-300"
-               href="/?page={{page}}">{{ page }}</a>
-            {% endif %}
-            {% endfor %}
-
-            <a href="/?page={{last_page}}" class="h-full rounded-md border border-slate-300 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     class="scale-90 stroke-sky-600 icon icon-tabler icon-tabler-chevrons-right"
-                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M7 7l5 5l-5 5"></path>
-                    <path d="M13 7l5 5l-5 5"></path>
-                </svg>
-            </a>
-        </div>
+        <div id="pagination" class="flex flex-row justify-center gap-2 text-center mt-10"></div>
+        <script>
+            const paginationCallBack = (page) => { window.location.href = `/?page=${page}`};
+            document.getElementById("pagination").innerHTML = generatePaginationElement({
+            /* @formatter:off */
+            pages: {{articles.pages|json}},
+            currentPage: {{articles.current_page}},
+            /* @formatter:on */
+        }, "paginationCallBack");</script>
     </div>
 </main>
+
 {% endblock %}

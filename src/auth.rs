@@ -1,5 +1,6 @@
 use async_session::{MemoryStore, Session, SessionStore};
 
+use axum::routing::get;
 use axum::{
     async_trait,
     extract::{
@@ -7,7 +8,7 @@ use axum::{
     },
     http::{header::SET_COOKIE, HeaderMap},
     response::{IntoResponse, Redirect, Response},
-    RequestPartsExt,
+    RequestPartsExt, Router,
 };
 use http::{header, request::Parts};
 use oauth2::{
@@ -17,8 +18,18 @@ use oauth2::{
 use serde::{Deserialize, Serialize};
 
 use crate::settings::SETTINGS;
+use crate::state::AppState;
 
-static COOKIE_NAME: &str = "MANUCURE_SESSION";
+pub(crate) static COOKIE_NAME: &str = "MANUCURE_SESSION";
+
+pub fn router() -> Router<AppState> {
+    Router::new()
+        .route("/manucure/", get(openid_auth))
+        .route("/manucure", get(openid_auth))
+        .route("/authorized/", get(login_authorized))
+        .route("/authorized", get(login_authorized))
+        .route("/logout/", get(logout))
+}
 
 pub fn oauth_client() -> BasicClient {
     let client_id = SETTINGS.oauth_provider.client_id.to_string();
@@ -40,7 +51,7 @@ pub fn oauth_client() -> BasicClient {
     .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap())
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Oauth2User {
     pub sub: String,
     pub email_verified: bool,

@@ -1,3 +1,5 @@
+extern crate core;
+
 use std::io;
 use std::net::SocketAddr;
 use std::path::PathBuf;
@@ -8,10 +10,8 @@ use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::routing::get_service;
 use axum::Extension;
-use axum::{
-    routing::{get, post},
-    Router,
-};
+use axum::{routing::get, Router};
+use clap::{Parser, Subcommand};
 use http::StatusCode;
 use meilisearch_sdk::client::Client as MeiliClient;
 use sqlx::postgres::PgPoolOptions;
@@ -20,22 +20,46 @@ use tower_http::services::{ServeDir, ServeFile};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use views::{article, home};
 
 use crate::auth::oauth_client;
 use crate::errors::AppResult;
 use crate::settings::SETTINGS;
 use crate::state::AppState;
 
+use crate::views::{article, home, tag};
+
 pub(crate) mod auth;
 mod db;
 mod errors;
+mod search;
 mod settings;
 mod state;
 mod views;
 
+/// A Self-Hosted alternative to pocket
+#[derive(Parser)]
+#[command(
+    version,
+    name = "Manucure",
+    author = "Paul D. <paul.delafosse@protonmail.com>"
+)]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    // Start the manucure server
+    Serve,
+    // Refresh all meili search indexes
+    Reindex,
+}
+
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> AppResult<()> {
+    let cli = Cli::parse();
+
     tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::new(
             std::env::var("RUST_LOG").unwrap_or_else(|_| "manucure=debug,tower_http=debug".into()),
@@ -54,12 +78,22 @@ async fn main() -> anyhow::Result<()> {
 
     sqlx::migrate!().run(&db).await?;
 
-    let store = MemoryStore::new();
-    let oauth_client = oauth_client();
     let meili_client = MeiliClient::new(
         &SETTINGS.search_engine.url,
         &SETTINGS.search_engine.admin_key,
     );
+
+    match cli.command {
+        Command::Serve => serve(meili_client, db).await?,
+        Command::Reindex => search::reindex_all(meili_client, db).await?,
+    }
+
+    Ok(())
+}
+
+async fn serve(meili_client: MeiliClient, db: PgPool) -> AppResult<()> {
+    let store = MemoryStore::new();
+    let oauth_client = oauth_client();
 
     let state = AppState {
         store,
@@ -74,38 +108,18 @@ async fn main() -> anyhow::Result<()> {
         "assets"
     };
 
+    let favicon_service =
+        get_service(ServeFile::new("assets/favicon-32x32.png")).handle_error(handle_error);
+    let assets_service = get_service(ServeDir::new(asset_path)).handle_error(handle_error);
+
     let router = Router::new()
         .route("/health", get(health))
-        .route("/tags", get(home::tags))
-        .route("/archive", get(home::archived))
-        .route("/favorites", get(home::starred))
-        .route("/articles/:id", get(article::get::article))
-        .route("/articles/save", get(article::get::save))
-        .route("/articles/:id/delete", get(article::get::delete_article))
-        .route("/articles/:id/star", post(article::post::star_article))
-        .route("/articles/:id/unstar", post(article::post::unstar_article))
-        .route(
-            "/articles/:id/archive",
-            post(article::post::archive_article),
-        )
-        .route(
-            "/articles/:id/unarchive",
-            post(article::post::unarchive_article),
-        )
-        .route("/auth/manucure/", get(auth::openid_auth))
-        .route("/auth/manucure", get(auth::openid_auth))
-        .route("/auth/authorized/", get(auth::login_authorized))
-        .route("/auth/authorized", get(auth::login_authorized))
-        .route("/logout/", get(auth::logout))
-        .route("/", get(home::articles))
-        .nest_service(
-            "/favicon.ico",
-            get_service(ServeFile::new("assets/favicon-32x32.png")).handle_error(handle_error),
-        )
-        .nest_service(
-            "/assets",
-            get_service(ServeDir::new(asset_path)).handle_error(handle_error),
-        )
+        .nest("/articles", article::router())
+        .nest("/tags", tag::router())
+        .nest("/auth", auth::router())
+        .merge(home::router())
+        .nest_service("/favicon.ico", favicon_service)
+        .nest_service("/assets", assets_service)
         .layer(Extension(db))
         .layer(TraceLayer::new_for_http())
         .with_state(state);
