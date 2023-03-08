@@ -72,9 +72,12 @@
 
     window.addEventListener('keydown', (event) => {
         const keyName = event.key;
+        const modifierPressed = event.ctrlKey || event.metaKey;
+    
         let search = document.getElementsByClassName("ais-SearchBox-input");
         let searchInput = search.item(0);
-        if (event.ctrlKey && keyName === "k") {
+
+        if (modifierPressed && keyName === "k") {
             initSearch()
             event.preventDefault();
             searchInput.focus();
