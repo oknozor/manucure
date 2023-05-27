@@ -1,0 +1,9 @@
+[package]
+name = "manucure-settings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde.workspace = true
+config.workspace = true
+once_cell.workspace = true
