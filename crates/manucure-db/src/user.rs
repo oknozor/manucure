@@ -6,6 +6,7 @@ pub struct User {
     pub id: i64,
     pub username: String,
     pub email: String,
+    pub password_hash: Option<String>,
 }
 
 pub trait AsUser {
@@ -20,6 +21,26 @@ pub async fn all(db: &PgPool) -> DbResult<Vec<User>> {
         .await?;
 
     Ok(users)
+}
+
+pub async fn save(
+    username: String,
+    email: String,
+    password_hash: String,
+    db: &PgPool,
+) -> DbResult<User> {
+    // language=PostgreSQL
+    let user = sqlx::query_as!(
+        User,
+        "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *",
+        username,
+        email,
+        Some(password_hash)
+    )
+    .fetch_one(db)
+    .await?;
+
+    Ok(user)
 }
 
 pub async fn get_connected_user(user: impl AsUser, db: &PgPool) -> DbResult<User> {

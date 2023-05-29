@@ -1,7 +1,8 @@
 use axum::response::IntoResponse;
 use axum::Extension;
 
-use crate::auth::{get_connected_user, Oauth2User};
+use crate::auth::get_connected_user;
+use crate::auth::openid::Oauth2User;
 use crate::errors::{ErrorTemplate, ViewResult};
 use crate::views::HtmlTemplate;
 use askama::Template;

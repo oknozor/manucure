@@ -1,17 +1,20 @@
 use std::path::PathBuf;
 
+use crate::openid::{fetch_open_id_endpoints, OAUTH_ENDPOINTS};
 use config::{Config, Environment, File};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 pub static SETTINGS: Lazy<Settings> = Lazy::new(|| Settings::get().expect("Config error"));
 
+pub mod openid;
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Settings {
     pub debug: bool,
     pub domain: String,
     pub port: u16,
-    pub oauth_provider: AuthSettings,
+    pub openid: Option<OpenIdSettings>,
     pub database: DbSettings,
     pub search_engine: SearchSettings,
 }
@@ -33,13 +36,10 @@ pub struct DbSettings {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct AuthSettings {
+pub struct OpenIdSettings {
     pub client_id: String,
     pub client_secret: String,
-    pub provider: String,
-    pub user_info_url: String,
-    pub auth_url: String,
-    pub token_url: String,
+    pub openid_discovery_url: String,
 }
 
 impl Settings {
@@ -82,24 +82,27 @@ impl Settings {
         }
     }
 
-    pub fn token_url(&self) -> String {
-        format!(
-            "{}{}",
-            self.oauth_provider.provider, self.oauth_provider.token_url
-        )
+    pub async fn token_url(&self) -> &str {
+        OAUTH_ENDPOINTS
+            .get_or_init(fetch_open_id_endpoints)
+            .await
+            .token_endpoint
+            .as_str()
     }
 
-    pub fn auth_url(&self) -> String {
-        format!(
-            "{}{}",
-            self.oauth_provider.provider, self.oauth_provider.auth_url
-        )
+    pub async fn auth_url(&self) -> &str {
+        OAUTH_ENDPOINTS
+            .get_or_init(fetch_open_id_endpoints)
+            .await
+            .authorization_endpoint
+            .as_str()
     }
 
-    pub fn user_info_url(&self) -> String {
-        format!(
-            "{}{}",
-            self.oauth_provider.provider, self.oauth_provider.user_info_url
-        )
+    pub async fn user_info_url(&self) -> &str {
+        OAUTH_ENDPOINTS
+            .get_or_init(fetch_open_id_endpoints)
+            .await
+            .userinfo_endpoint
+            .as_str()
     }
 }

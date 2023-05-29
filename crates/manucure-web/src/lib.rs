@@ -1,4 +1,4 @@
-use crate::auth::oauth_client;
+use crate::auth::openid::oauth_client;
 use crate::errors::AppResult;
 use crate::state::AppState;
 use crate::views::{article, home, tag};
@@ -23,7 +23,11 @@ pub mod views;
 
 pub async fn serve(meili_client: MeiliClient, db: PgPool) -> AppResult<()> {
     let store = MemoryStore::new();
-    let oauth_client = oauth_client();
+    let oauth_client = if SETTINGS.openid.is_some() {
+        Some(oauth_client().await)
+    } else {
+        None
+    };
 
     let state = AppState {
         store,

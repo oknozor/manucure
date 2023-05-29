@@ -2,7 +2,7 @@ use async_session::log::error;
 use axum::response::{IntoResponse, Redirect, Response};
 use http::StatusCode;
 
-use crate::auth::Oauth2User;
+use crate::auth::openid::Oauth2User;
 use crate::views::HtmlTemplate;
 use askama::Template;
 

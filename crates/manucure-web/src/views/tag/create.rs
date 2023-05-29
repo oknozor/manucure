@@ -1,4 +1,5 @@
-use crate::auth::{get_connected_user, Oauth2User};
+use crate::auth::get_connected_user;
+use crate::auth::openid::Oauth2User;
 use crate::errors::AppResult;
 use crate::state::AppState;
 use axum::extract::State;

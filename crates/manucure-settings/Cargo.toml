@@ -7,3 +7,5 @@ edition = "2021"
 serde.workspace = true
 config.workspace = true
 once_cell.workspace = true
+reqwest.workspace = true
+tokio.workspace = true

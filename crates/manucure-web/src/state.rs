@@ -6,7 +6,7 @@ use oauth2::basic::BasicClient;
 #[derive(Clone)]
 pub struct AppState {
     pub store: MemoryStore,
-    pub oauth_client: BasicClient,
+    pub oauth_client: Option<BasicClient>,
     pub meili_client: MeiliClient,
 }
 
@@ -16,7 +16,7 @@ impl FromRef<AppState> for MemoryStore {
     }
 }
 
-impl FromRef<AppState> for BasicClient {
+impl FromRef<AppState> for Option<BasicClient> {
     fn from_ref(state: &AppState) -> Self {
         state.oauth_client.clone()
     }

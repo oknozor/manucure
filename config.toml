@@ -14,10 +14,7 @@ url = "http://localhost:7700"
 api_key = "dde4b216f612cadc1af1b4b0ded474e0525bb26a9d20d3bd57a5f4b23f7ca79d"
 admin_key = "3ef89602a65d4575d4a325a650713d14665cf042db0ada5925a5c7897b32b52a"
 
-[oauth_provider]
-client_id = "manucure"
-client_secret = "zB6L5Xw2C7ynDTDpWucCj58S71LPeMav"
-provider = "https://keycloak.cloud.hoohoot.org"
-user_info_url = "/auth/realms/hoohoot/protocol/openid-connect/userinfo"
-auth_url = "/auth/realms/hoohoot/protocol/openid-connect/auth"
-token_url = "/auth/realms/hoohoot/protocol/openid-connect/token"
+# [open_id]
+# client_id = "manucure"
+# client_secret = "zB6L5Xw2C7ynDTDpWucCj58S71LPeMav"
+# openid_discovery_url = "https://keycloak.cloud.hoohoot.org/auth/realms/hoohoot/.well-known/openid-configuration"

@@ -1,19 +1,22 @@
 use async_session::{MemoryStore, Session, SessionStore};
 
-use axum::routing::get;
+use crate::auth::AuthRedirect;
+use crate::auth::COOKIE_NAME;
+use crate::state::AppState;
+
 use axum::{
     async_trait,
     extract::{
         rejection::TypedHeaderRejectionReason, FromRef, FromRequestParts, Query, State, TypedHeader,
     },
     http::{header::SET_COOKIE, HeaderMap},
-    response::{IntoResponse, Redirect, Response},
-    RequestPartsExt, Router,
+    response::{IntoResponse, Redirect},
+    RequestPartsExt,
 };
 use http::{header, request::Parts};
-use manucure_db::error::DbError;
-use manucure_db::user::{AsUser, User};
-use manucure_db::PgPool;
+
+use manucure_db::user::AsUser;
+
 use manucure_settings::SETTINGS;
 use oauth2::reqwest::async_http_client;
 use oauth2::{
@@ -21,53 +24,6 @@ use oauth2::{
     Scope, TokenResponse, TokenUrl,
 };
 use serde::{Deserialize, Serialize};
-
-use crate::errors::{AppError, AppResult};
-use crate::state::AppState;
-
-pub static COOKIE_NAME: &str = "MANUCURE_SESSION";
-
-pub async fn get_connected_user(user: Option<&Oauth2User>, db: &PgPool) -> AppResult<User> {
-    let Some(user) = user else {
-        return Err(AppError::Unauthorized);
-    };
-
-    manucure_db::user::get_connected_user(user, db)
-        .await
-        .map_err(|err| match err {
-            DbError::Unauthorized => AppError::Unauthorized,
-            err => AppError::Internal(err.into()),
-        })
-}
-
-pub fn router() -> Router<AppState> {
-    Router::new()
-        .route("/manucure/", get(openid_auth))
-        .route("/manucure", get(openid_auth))
-        .route("/authorized/", get(login_authorized))
-        .route("/authorized", get(login_authorized))
-        .route("/logout/", get(logout))
-}
-
-pub fn oauth_client() -> BasicClient {
-    let client_id = SETTINGS.oauth_provider.client_id.to_string();
-    let client_secret = SETTINGS.oauth_provider.client_secret.to_string();
-    let redirect_url = format!(
-        "{}://{}/auth/authorized",
-        SETTINGS.protocol(),
-        SETTINGS.domain
-    );
-    let auth_url = SETTINGS.auth_url();
-    let token_url = SETTINGS.token_url();
-
-    BasicClient::new(
-        ClientId::new(client_id),
-        Some(ClientSecret::new(client_secret)),
-        AuthUrl::new(auth_url).unwrap(),
-        Some(TokenUrl::new(token_url).unwrap()),
-    )
-    .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap())
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Oauth2User {
@@ -80,47 +36,36 @@ pub struct Oauth2User {
     pub email: String,
 }
 
-impl AsUser for &Oauth2User {
-    fn username(&self) -> &str {
-        &self.preferred_username
-    }
+pub async fn oauth_client() -> BasicClient {
+    let provider = SETTINGS.openid.as_ref().expect("openid provider");
+    let client_id = provider.client_id.to_string();
+    let client_secret = provider.client_secret.to_string();
+    let redirect_url = format!(
+        "{}://{}/auth/authorized",
+        SETTINGS.protocol(),
+        SETTINGS.domain
+    );
+    let auth_url = SETTINGS.auth_url().await;
+    let token_url = SETTINGS.token_url().await;
 
-    fn email(&self) -> &str {
-        &self.email
-    }
+    BasicClient::new(
+        ClientId::new(client_id),
+        Some(ClientSecret::new(client_secret)),
+        AuthUrl::new(auth_url.to_string()).unwrap(),
+        Some(TokenUrl::new(token_url.to_string()).unwrap()),
+    )
+    .set_redirect_uri(RedirectUrl::new(redirect_url).unwrap())
 }
 
-pub struct AuthRedirect;
-
-impl IntoResponse for AuthRedirect {
-    fn into_response(self) -> Response {
-        Redirect::temporary("/auth/manucure").into_response()
-    }
-}
-
-pub async fn openid_auth(State(client): State<BasicClient>) -> impl IntoResponse {
-    let (auth_url, _csrf_token) = client
+pub async fn openid_auth(State(state): State<AppState>) -> impl IntoResponse {
+    let (auth_url, _csrf_token) = state
+        .oauth_client
+        .expect("openid configuration")
         .authorize_url(CsrfToken::new_random)
         .add_scope(Scope::new("profile".to_string()))
         .url();
 
     Redirect::to(auth_url.as_ref())
-}
-
-pub async fn logout(
-    State(store): State<MemoryStore>,
-    TypedHeader(cookies): TypedHeader<headers::Cookie>,
-) -> impl IntoResponse {
-    let cookie = cookies.get(COOKIE_NAME).unwrap();
-    let session = match store.load_session(cookie.to_string()).await.unwrap() {
-        Some(s) => s,
-        // No session active, just redirect
-        None => return Redirect::to("/"),
-    };
-
-    store.destroy_session(session).await.unwrap();
-
-    Redirect::to("/")
 }
 
 #[derive(Debug, Deserialize)]
@@ -132,10 +77,11 @@ pub struct AuthRequest {
 
 pub async fn login_authorized(
     Query(query): Query<AuthRequest>,
-    State(store): State<MemoryStore>,
-    State(oauth_client): State<BasicClient>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let token = oauth_client
+    let token = state
+        .oauth_client
+        .expect("openid configuration")
         .exchange_code(AuthorizationCode::new(query.code.clone()))
         .request_async(async_http_client)
         .await
@@ -143,7 +89,7 @@ pub async fn login_authorized(
 
     let client = reqwest::Client::new();
     let user_data: Oauth2User = client
-        .get(&SETTINGS.user_info_url())
+        .get(SETTINGS.user_info_url().await)
         .bearer_auth(token.access_token().secret())
         .send()
         .await
@@ -154,7 +100,7 @@ pub async fn login_authorized(
 
     let mut session = Session::new();
     session.insert("user", &user_data).unwrap();
-    let cookie = store.store_session(session).await.unwrap().unwrap();
+    let cookie = state.store.store_session(session).await.unwrap().unwrap();
     let cookie = format!("{COOKIE_NAME}={cookie}; SameSite=Lax; Path=/");
     let mut headers = HeaderMap::new();
     headers.insert(SET_COOKIE, cookie.parse().unwrap());

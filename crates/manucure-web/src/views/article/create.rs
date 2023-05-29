@@ -3,7 +3,8 @@ use axum::response::{IntoResponse, Redirect};
 use axum::{Extension, Form};
 use manucure_db::article::fetch_and_store;
 
-use crate::auth::{get_connected_user, Oauth2User};
+use crate::auth::get_connected_user;
+use crate::auth::openid::Oauth2User;
 use crate::errors::{AppError, ErrorTemplate, ViewResult};
 use crate::state::AppState;
 use manucure_db::PgPool;

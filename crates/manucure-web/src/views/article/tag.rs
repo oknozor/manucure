@@ -2,7 +2,8 @@ use axum::extract::{Path, State};
 use axum::{Extension, Json};
 use manucure_db::tag;
 
-use crate::auth::{get_connected_user, Oauth2User};
+use crate::auth::get_connected_user;
+use crate::auth::openid::Oauth2User;
 use crate::errors::{AppError, AppResult};
 use crate::state::AppState;
 use crate::views::home::ArticlesWithPaginationDto;
