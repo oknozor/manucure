@@ -1,0 +1,9 @@
+[package]
+name = "manucure-index"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+meilisearch-sdk.workspace = true
+tracing.workspace = true
+serde.workspace = true

@@ -1,0 +1,21 @@
+[package]
+name = "manucure-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+manucure-db.workspace = true
+manucure-index.workspace = true
+manucure-web.workspace = true
+manucure-model.workspace = true
+manucure-settings.workspace = true
+
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+
+[[bin]]
+name = "manucure"
+path = "src/main.rs"

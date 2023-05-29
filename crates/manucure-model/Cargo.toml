@@ -1,0 +1,9 @@
+[package]
+name = "manucure-model"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+manucure-db.workspace = true
+manucure-index.workspace = true
+chrono.workspace = true

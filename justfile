@@ -1,5 +1,6 @@
 ## Build
 migrate-db:
+    cd crates/manucure-db
     docker-compose -f docker-compose.dev.yml up postgres -d
     sqlx migrate run
     cargo sqlx prepare --merged
